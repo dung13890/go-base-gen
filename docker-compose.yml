@@ -1,0 +1,24 @@
+version: '3.8'
+volumes:
+  go_volume:
+services:
+  go-app:
+    build:
+      context: ./
+      dockerfile: ./docker/Dockerfile
+    platform: linux/amd64
+    image: go-app:1.20
+    networks:
+      - go-app-net
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./:/var/www/app
+    working_dir: /var/www/app
+networks:
+  go-app-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.168.1.0/24
+          gateway: 172.168.1.1
