@@ -1,6 +1,7 @@
 package main
 
 import (
+	"embed"
 	"go-base-gen/cmd"
 	"log"
 	"os"
@@ -10,6 +11,8 @@ import (
 
 var (
 	version string = "v1.0.0"
+	//go:embed template/*.tmpl
+	templateFs embed.FS
 )
 
 func main() {
@@ -19,7 +22,7 @@ func main() {
 		Usage:   "print only the version",
 	}
 
-	project := cmd.NewProject()
+	project := cmd.NewProject(templateFs)
 
 	app := &cli.App{
 		Name:    "go-base-gen",
