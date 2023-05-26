@@ -1,6 +1,6 @@
 # go-base-gen
-![workflow status](https://github.com/dung13890/go-base-ge/actions/workflows/go-ci.yml/badge.svg)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![workflow status](https://github.com/dung13890/go-base-gen/actions/workflows/go-ci.yml/badge.svg)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
 
 ## Overview
