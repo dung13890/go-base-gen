@@ -1,0 +1,27 @@
+{{/*
+Copyright (c) 2023 dung13890. All rights reserved.
+Mit License (MIT)
+*/}}
+
+{{define "internal/registry/service.go"}}package registry
+
+import (
+	"{{.Module}}/internal/domain"
+	"{{.Module}}/internal/impl/service"
+	"{{.Module}}/pkg/cache"
+)
+
+// Service registry
+type Service struct {
+	JWTSvc      domain.JWTService
+	ThrottleSvc domain.ThrottleService
+}
+
+// NewService will create new an service object representation of domain.
+func NewService(cm cache.Client) *Service {
+	return &Service{
+		JWTSvc:      service.NewJWTService(cm),
+		ThrottleSvc: service.NewThrottleService(cm),
+	}
+}
+{{end}}

@@ -1,0 +1,25 @@
+{{/*
+Copyright (c) 2023 dung13890. All rights reserved.
+Mit License (MIT)
+*/}}
+
+{{define "internal/registry/repository.go"}}package registry
+
+import (
+	authRepo "{{.Module}}/internal/modules/auth/repository"
+
+	"gorm.io/gorm"
+)
+
+// Repository registry
+type Repository struct {
+	AuthModule *authRepo.Repository
+}
+
+// NewRepository implements from interface for modules
+func NewRepository(db *gorm.DB) *Repository {
+	return &Repository{
+		AuthModule: authRepo.NewRepository(db),
+	}
+}
+{{end}}

@@ -1,0 +1,9 @@
+{{/*
+Copyright (c) 2023 dung13890. All rights reserved.
+Mit License (MIT)
+*/}}
+
+{{define "db/migrations/20220705080200_create_auth_table.down.sql"}}DROP TABLE IF EXISTS roles;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS password_resets;
+{{end}}

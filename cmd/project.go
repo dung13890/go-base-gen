@@ -25,22 +25,87 @@ var (
 		"db/seeds",
 		"internal/app",
 		"internal/constants",
-		"internal/domain/auth/delivery/http",
-		"internal/domain/auth/delivery/grpc",
-		"internal/domain/auth/repository",
-		"internal/domain/auth/usecase",
-		"internal/modules",
+		"internal/domain",
+		"internal/modules/auth/delivery/http",
+		"internal/modules/auth/delivery/grpc",
+		"internal/modules/auth/repository",
+		"internal/modules/auth/usecase",
 		"internal/impl/pubsub",
 		"internal/impl/service",
 		"internal/registry",
-		"pkg",
+		"pkg/cache",
+		"pkg/errors",
+		"pkg/logger",
+		"pkg/postgres",
+		"pkg/redis",
+		"pkg/utils",
+		"pkg/validate",
 	}
 
 	files = []string{
-		".golint.yaml.tmpl",
+		".golint.yml.tmpl",
 		".editorconfig.tmpl",
+		".env.example.tmpl",
 		"go.mod.tmpl",
 		"Makefile.tmpl",
+		"cmd/app/main.go.tmpl",
+		"cmd/app/air.toml.tmpl",
+		"cmd/migrate/main.go.tmpl",
+		"cmd/seed/main.go.tmpl",
+		"config/app.go.tmpl",
+		"config/database.go.tmpl",
+		"config/redis.go.tmpl",
+		"db/migrations/20220705080200_create_auth_table.down.sql.tmpl",
+		"db/migrations/20220705080200_create_auth_table.up.sql.tmpl",
+		"db/seeds/data.json.tmpl",
+		"internal/app/app.go.tmpl",
+		"internal/app/seed.go.tmpl",
+		"internal/constants/http.go.tmpl",
+		"internal/domain/auth.go.tmpl",
+		"internal/domain/role.go.tmpl",
+		"internal/domain/user.go.tmpl",
+		"internal/domain/password_reset.go.tmpl",
+		"internal/domain/jwt_svc.go.tmpl",
+		"internal/domain/throttle_svc.go.tmpl",
+		"internal/impl/service/jwt_svc.go.tmpl",
+		"internal/impl/service/throttle_svc.go.tmpl",
+		"internal/modules/auth/delivery/http/middleware.go.tmpl",
+		"internal/modules/auth/delivery/http/handler.go.tmpl",
+		"internal/modules/auth/delivery/http/auth_dto.go.tmpl",
+		"internal/modules/auth/delivery/http/auth_http.go.tmpl",
+		"internal/modules/auth/delivery/http/role_dto.go.tmpl",
+		"internal/modules/auth/delivery/http/role_http.go.tmpl",
+		"internal/modules/auth/delivery/http/user_dto.go.tmpl",
+		"internal/modules/auth/delivery/http/user_http.go.tmpl",
+		"internal/modules/auth/repository/repository.go.tmpl",
+		"internal/modules/auth/repository/password_reset_dao.go.tmpl",
+		"internal/modules/auth/repository/password_reset_repo.go.tmpl",
+		"internal/modules/auth/repository/role_dao.go.tmpl",
+		"internal/modules/auth/repository/role_repo.go.tmpl",
+		"internal/modules/auth/repository/user_dao.go.tmpl",
+		"internal/modules/auth/repository/user_repo.go.tmpl",
+		"internal/modules/auth/usecase/usecase.go.tmpl",
+		"internal/modules/auth/usecase/auth_uc.go.tmpl",
+		"internal/modules/auth/usecase/user_uc.go.tmpl",
+		"internal/modules/auth/usecase/role_uc.go.tmpl",
+		"internal/registry/http.go.tmpl",
+		"internal/registry/repository.go.tmpl",
+		"internal/registry/service.go.tmpl",
+		"internal/registry/usecase.go.tmpl",
+		"pkg/cache/client.go.tmpl",
+		"pkg/cache/redis_store.go.tmpl",
+		"pkg/errors/code.go.tmpl",
+		"pkg/errors/errors.go.tmpl",
+		"pkg/logger/logger.go.tmpl",
+		"pkg/postgres/migrate.go.tmpl",
+		"pkg/postgres/postgres.go.tmpl",
+		"pkg/redis/redis.go.tmpl",
+		"pkg/utils/bcrypt.go.tmpl",
+		"pkg/utils/md5.go.tmpl",
+		"pkg/utils/rand_string.go.tmpl",
+		"pkg/utils/slug.go.tmpl",
+		"pkg/utils/uuid.go.tmpl",
+		"pkg/validate/base.go.tmpl",
 	}
 )
 
@@ -154,17 +219,28 @@ func (p *project) generateStruct(context.Context) error {
 // generateFile is a function to generate file for project
 func (p *project) generateFile(_ context.Context, content embed.FS) error {
 	dir := filepath.Join(p.Path, p.Module)
-	tmpl := template.Must(template.New("tmpl").ParseFS(content, "template/*.tmpl"))
+	tmpl, err := template.New("tmpl").ParseFS(
+		content,
+		"template/*.tmpl",
+		"template/*/*.tmpl",
+		"template/*/*/*.tmpl",
+		"template/*/*/*/*.tmpl",
+		"template/*/*/*/*/*.tmpl",
+		"template/*/*/*/*/*/*.tmpl",
+	)
+	if err != nil {
+		return err
+	}
 
 	for _, f := range files {
-		target := filepath.Join(dir, strings.TrimSuffix(f, ".tmpl"))
+		index := strings.TrimSuffix(f, ".tmpl")
+		target := filepath.Join(dir, index)
 		f, err := os.Create(filepath.Clean(target))
 		if err != nil {
 			return err
 		}
 
-		fileName := filepath.Base(target)
-		if err := tmpl.ExecuteTemplate(f, fileName, p); err != nil {
+		if err := tmpl.ExecuteTemplate(f, index, p); err != nil {
 			return err
 		}
 
