@@ -28,7 +28,7 @@ GLOBAL OPTIONS:
 
 ## Features
 - [x] Generate project base on clean architecture
-- [x] Generate module
+- [ ] Generate module
 
 
 ## Structure

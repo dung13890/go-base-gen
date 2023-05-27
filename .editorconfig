@@ -17,6 +17,6 @@ indent_size = 2
 [{Makefile,**.mk}]
 indent_style = tab
 
-[*.go]
+[*.{go,tmpl,go.tmpl}]
 indent_style = tab
 indent_size = 8

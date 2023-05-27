@@ -11,7 +11,7 @@ import (
 
 var (
 	version string = "v1.0.0"
-	//go:embed template/*.tmpl
+	//go:embed template/*
 	templateFs embed.FS
 )
 
