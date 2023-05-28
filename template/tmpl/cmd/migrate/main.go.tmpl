@@ -1,0 +1,37 @@
+{{/*
+Copyright (c) 2023 dung13890. All rights reserved.
+Mit License (MIT)
+*/}}
+
+{{define "cmd/migrate/main.go"}}package main
+
+import (
+	"time"
+
+	"{{.Project}}/config"
+	"{{.Project}}/pkg/logger"
+	"{{.Project}}/pkg/postgres"
+)
+
+func main() {
+	logger.InitLogger()
+	if err := config.LoadConfig(); err != nil {
+		logger.Error().Fatal(err)
+	}
+
+	conf := config.GetAppConfig()
+
+	// Set timezone
+	loc, err := time.LoadLocation(conf.AppTimeZone)
+	if err != nil {
+		logger.Error().Fatal(err)
+	}
+	time.Local = loc
+
+	db := config.GetDBConfig()
+
+	if err := postgres.Migrate(db); err != nil {
+		logger.Error().Fatal(err)
+	}
+}
+{{end}}

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"embed"
 	"go-base-gen/cmd"
 	"log"
 	"os"
@@ -11,8 +10,6 @@ import (
 
 var (
 	version string = "v1.0.0"
-	//go:embed template/*
-	templateFs embed.FS
 )
 
 func main() {
@@ -22,7 +19,8 @@ func main() {
 		Usage:   "print only the version",
 	}
 
-	project := cmd.NewProject(templateFs)
+	project := cmd.NewProject()
+	domain := cmd.NewDomain()
 
 	app := &cli.App{
 		Name:    "go-base-gen",
@@ -31,6 +29,7 @@ func main() {
 		Usage:   "Use this tool to generate base code",
 		Commands: []*cli.Command{
 			project,
+			domain,
 		},
 		Action: func(ctx *cli.Context) error {
 			if err := cli.ShowAppHelp(ctx); err != nil {

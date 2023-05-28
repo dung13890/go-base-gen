@@ -1,0 +1,32 @@
+{{/*
+Copyright (c) 2023 dung13890. All rights reserved.
+Mit License (MIT)
+*/}}
+
+{{define "internal/modules/auth/usecase/usecase.go"}}package usecase
+
+import (
+	"{{.Project}}/internal/domain"
+	"{{.Project}}/internal/modules/auth/repository"
+)
+
+// Usecase for module auth
+type Usecase struct {
+	RoleUC domain.RoleUsecase
+	UserUC domain.UserUsecase
+	AuthUC domain.AuthUsecase
+}
+
+// NewUsecase implements from interface
+func NewUsecase(
+	repo *repository.Repository,
+	jwtSvc domain.JWTService,
+	thrSvc domain.ThrottleService,
+) *Usecase {
+	return &Usecase{
+		RoleUC: NewRoleUsecase(repo.RoleR),
+		UserUC: NewUserUsecase(repo.UserR),
+		AuthUC: NewAuthUsecase(jwtSvc, thrSvc, repo.UserR, repo.PasswordR),
+	}
+}
+{{end}}
