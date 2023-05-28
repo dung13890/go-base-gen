@@ -1,0 +1,25 @@
+{{/*
+Copyright (c) 2023 dung13890. All rights reserved.
+Mit License (MIT)
+*/}}
+
+{{define "internal/modules/name/repository/repository.go"}}package repository
+
+import (
+	"{{.Project}}/internal/domain"
+
+	"gorm.io/gorm"
+)
+
+// Repository for module auth
+type Repository struct {
+	{{.Domain | capitalize}}R domain.{{.Domain | capitalize}}Repository
+}
+
+// NewRepository will create new postgres object
+func NewRepository(db *gorm.DB) *Repository {
+	return &Repository{
+		{{.Domain | capitalize}}R: &{{.Domain | capitalize}}Repository{DB: db},
+	}
+}
+{{end}}

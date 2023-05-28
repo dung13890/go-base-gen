@@ -1,0 +1,26 @@
+{{/*
+Copyright (c) 2023 dung13890. All rights reserved.
+Mit License (MIT)
+*/}}
+
+{{define "internal/modules/name/usecase/usecase.go"}}package usecase
+
+import (
+	"{{.Project}}/internal/domain"
+	"{{.Project}}/internal/modules/{{.Module}}/repository"
+)
+
+// Usecase for module auth
+type Usecase struct {
+	{{.Domain | capitalize}}UC domain.{{.Domain | capitalize}}Usecase
+}
+
+// NewUsecase implements from interface
+func NewUsecase(
+	repo *repository.Repository,
+) *Usecase {
+	return &Usecase{
+		{{.Domain | capitalize}}UC: New{{.Domain | capitalize}}Usecase(repo.{{.Domain | capitalize}}R),
+	}
+}
+{{end}}

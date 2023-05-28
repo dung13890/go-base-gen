@@ -1,0 +1,26 @@
+{{/*
+Copyright (c) 2023 dung13890. All rights reserved.
+Mit License (MIT)
+*/}}
+
+{{define "internal/modules/name/delivery/http/handler.go"}}package http
+
+import (
+	"{{.Project}}/internal/modules/{{.Module}}/usecase"
+
+	"github.com/labstack/echo/v4"
+)
+
+// NewHandler will initialize the {{.Module}} module endpoints
+func NewHandler(g *echo.Group, uc *usecase.Usecase) {
+	// {{.Domain}}Handler will initialize the {{.Domain}}/ resources endpoint
+	{{.Domain}}Handler := &{{.Domain | capitalize}}Handler{
+		Usecase: uc.{{.Domain | capitalize}}UC,
+	}
+
+	// {{.Domain | capitalize}} routes
+	g.GET("/{{.Domain}}s", {{.Domain}}Handler.Index)
+	g.GET("/{{.Domain}}s/:id", {{.Domain}}Handler.Show)
+	g.POST("/{{.Domain}}s", {{.Domain}}Handler.Store)
+}
+{{end}}

@@ -1,0 +1,36 @@
+{{/*
+Copyright (c) 2023 dung13890. All rights reserved.
+Mit License (MIT)
+*/}}
+
+{{define "internal/domain/domain.go"}}//go:generate mockgen -source=$GOFILE -destination=mock/{{.Domain}}_mock.go
+
+package domain
+
+import (
+	"context"
+	"time"
+)
+
+// {{.Domain | capitalize}} entity
+type {{.Domain | capitalize}} struct {
+	ID        uint       `json:"id"`
+	CreatedAt time.Time  `json:"created_at"`
+	UpdatedAt time.Time  `json:"updated_at"`
+	DeletedAt *time.Time `json:"deleted_at"`
+}
+
+// {{.Domain | capitalize}}Repository represent the {{.Domain | capitalize}}'s repository contract
+type {{.Domain | capitalize}}Repository interface {
+	Fetch(ctx context.Context) ([]{{.Domain | capitalize}}, error)
+	Find(ctx context.Context, id int) (*{{.Domain | capitalize}}, error)
+	Store(ctx context.Context, dm *{{.Domain | capitalize}}) error
+}
+
+// {{.Domain | capitalize}}Usecase represent the {{.Domain | capitalize}}'s usecase contract
+type {{.Domain | capitalize}}Usecase interface {
+	Fetch(ctx context.Context) ([]{{.Domain | capitalize}}, error)
+	Find(ctx context.Context, id int) (*{{.Domain | capitalize}}, error)
+	Store(ctx context.Context, dm *{{.Domain | capitalize}}) error
+}
+{{end}}

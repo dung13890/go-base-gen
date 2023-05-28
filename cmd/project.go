@@ -2,21 +2,21 @@ package cmd
 
 import (
 	"context"
-	"embed"
 	"errors"
 	"os"
 	"path/filepath"
 	"strings"
-	"text/template"
+
+	"go-base-gen/pkg/utils"
+	"go-base-gen/template"
 
 	"github.com/urfave/cli/v2"
 )
 
-var templateFs embed.FS
-
 var (
-	errDirExists = errors.New("Directory already exist!")
-	structs      = []string{
+	errDirExists          = errors.New("Directory already exist!")
+	errNameProjectInvalid = errors.New("Name of project is invalid!")
+	pStructs              = []string{
 		"cmd/app",
 		"cmd/migrate",
 		"cmd/seed",
@@ -42,7 +42,7 @@ var (
 		"pkg/validate",
 	}
 
-	files = []string{
+	pFiles = []string{
 		".golint.yml.tmpl",
 		".editorconfig.tmpl",
 		".env.example.tmpl",
@@ -110,21 +110,20 @@ var (
 )
 
 type project struct {
-	Module string
-	Path   string
+	Project string
+	Path    string
 }
 
 // NewProject is a function to create new project command
-func NewProject(tFs embed.FS) *cli.Command {
-	templateFs = tFs
+func NewProject() *cli.Command {
 	return &cli.Command{
 		Name:  "project",
 		Usage: "Generate base code for go project use clean architecture",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
-				Name:     "module",
-				Aliases:  []string{"m"},
-				Usage:    "Module name for the project",
+				Name:     "name",
+				Aliases:  []string{"n"},
+				Usage:    "Name of project with module format (ex: project-demo)",
 				Required: true,
 			},
 			&cli.StringFlag{
@@ -148,9 +147,14 @@ func NewProject(tFs embed.FS) *cli.Command {
 				return err
 			}
 
+			// Validate
+			if err := projectValidate(ctx); err != nil {
+				return err
+			}
+
 			p := &project{
-				Module: ctx.String("module"),
-				Path:   rltDir,
+				Project: strings.ToLower(ctx.String("name")),
+				Path:    rltDir,
 			}
 			// Create dir
 			if err := p.createDir(ctx.Context); err != nil {
@@ -166,7 +170,7 @@ func NewProject(tFs embed.FS) *cli.Command {
 			}
 
 			// Generate file
-			if err := p.generateFile(ctx.Context, templateFs); err != nil {
+			if err := p.generateFile(ctx.Context); err != nil {
 				if dErr := p.destroy(ctx.Context); dErr != nil {
 					return errors.Join(err, dErr)
 				}
@@ -178,9 +182,16 @@ func NewProject(tFs embed.FS) *cli.Command {
 	}
 }
 
+func projectValidate(ctx *cli.Context) error {
+	if ok := utils.ValidateDash(ctx.String("name")); !ok {
+		return errNameProjectInvalid
+	}
+	return nil
+}
+
 // createDir is a function to create directory for project
 func (p *project) createDir(context.Context) error {
-	dir := filepath.Join(p.Path, p.Module)
+	dir := filepath.Join(p.Path, p.Project)
 	// Check directory exist or not
 	if _, err := os.Stat(dir); !errors.Is(err, os.ErrNotExist) {
 		return errDirExists
@@ -195,7 +206,7 @@ func (p *project) createDir(context.Context) error {
 
 // destroy is a function to destroy project
 func (p *project) destroy(context.Context) error {
-	dir := filepath.Join(p.Path, p.Module)
+	dir := filepath.Join(p.Path, p.Project)
 
 	if err := os.RemoveAll(dir); err != nil {
 		return err
@@ -205,9 +216,9 @@ func (p *project) destroy(context.Context) error {
 
 // generateStruct is a function to generate struct for project
 func (p *project) generateStruct(context.Context) error {
-	dir := filepath.Join(p.Path, p.Module)
+	dir := filepath.Join(p.Path, p.Project)
 	// Generate struct
-	for _, s := range structs {
+	for _, s := range pStructs {
 		if err := os.MkdirAll(filepath.Join(dir, s), os.ModePerm); err != nil {
 			return err
 		}
@@ -217,22 +228,21 @@ func (p *project) generateStruct(context.Context) error {
 }
 
 // generateFile is a function to generate file for project
-func (p *project) generateFile(_ context.Context, content embed.FS) error {
-	dir := filepath.Join(p.Path, p.Module)
-	tmpl, err := template.New("tmpl").ParseFS(
-		content,
-		"template/*.tmpl",
-		"template/*/*.tmpl",
-		"template/*/*/*.tmpl",
-		"template/*/*/*/*.tmpl",
-		"template/*/*/*/*/*.tmpl",
-		"template/*/*/*/*/*/*.tmpl",
-	)
+func (p *project) generateFile(_ context.Context) error {
+	dir := filepath.Join(p.Path, p.Project)
+	tmpl, err := template.NewTemplate("tmpl", []string{
+		"tmpl/*.tmpl",
+		"tmpl/*/*.tmpl",
+		"tmpl/*/*/*.tmpl",
+		"tmpl/*/*/*/*.tmpl",
+		"tmpl/*/*/*/*/*.tmpl",
+		"tmpl/*/*/*/*/*/*.tmpl",
+	})
 	if err != nil {
 		return err
 	}
 
-	for _, f := range files {
+	for _, f := range pFiles {
 		index := strings.TrimSuffix(f, ".tmpl")
 		target := filepath.Join(dir, index)
 		f, err := os.Create(filepath.Clean(target))
