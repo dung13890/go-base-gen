@@ -3,7 +3,6 @@ package cmd
 import (
 	"context"
 	"errors"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -170,7 +169,6 @@ func (d *domain) generateStruct(context.Context) error {
 	// Generate struct
 	for _, s := range dStructs {
 		target := strings.Replace(s, ":name", d.Module, 1)
-		log.Println(target)
 		// Check directory exist or not
 		if _, err := os.Stat(filepath.Join(dir, target)); !errors.Is(err, os.ErrNotExist) {
 			continue
@@ -178,8 +176,6 @@ func (d *domain) generateStruct(context.Context) error {
 		if err := os.MkdirAll(filepath.Join(dir, target), os.ModePerm); err != nil {
 			return err
 		}
-
-		log.Printf("Created %s", filepath.Join(dir, target))
 	}
 
 	return nil
@@ -229,8 +225,6 @@ func (d *domain) generateFile(_ context.Context) error {
 		if err := f.Close(); err != nil {
 			return err
 		}
-		log.Println(index)
-		log.Println(target)
 	}
 
 	return nil
