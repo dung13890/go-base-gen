@@ -1,10 +1,10 @@
 package main
 
 import (
-	"go-base-gen/cmd"
 	"log"
 	"os"
 
+	"github.com/dung13890/go-base-gen/cmd"
 	"github.com/urfave/cli/v2"
 )
 

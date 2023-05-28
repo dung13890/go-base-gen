@@ -1,4 +1,4 @@
-module go-base-gen
+module github.com/dung13890/go-base-gen
 
 go 1.20
 

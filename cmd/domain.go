@@ -7,9 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"go-base-gen/pkg/utils"
-	"go-base-gen/template"
-
+	"github.com/dung13890/go-base-gen/pkg/utils"
+	"github.com/dung13890/go-base-gen/template"
 	"github.com/urfave/cli/v2"
 )
 

@@ -18,20 +18,44 @@ VERSION:
 
 COMMANDS:
    project  Generate base code for go project use clean architecture
+   domain   Create new domain in project
    help, h  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
    --help, -h     show help
    --version, -v  print only the version (default: false)
-
 ```
 
 ## Features
 - [x] Generate project base on clean architecture
-- [ ] Generate module
+- [x] Generate module
 
 
-## Structure
+## Installation
+```bash
+go install github.com/dung13890/go-base-gen@@latest
+```
+
+## Using
+- Init Project base on clean architecture
+```bash
+## Short
+go-base-gen project -n <project-name>
+
+## Long
+go-base-gen project --name <project-name> --path <project-path>
+```
+
+- Create new domain
+```bash
+## Short
+go-base-gen domain -n <domain-name> -pj <project-name> -m <module-name>
+
+## Long
+go-base-gen domain --name <domain-name> --project <project-name> --module <module-name> --path <project-path>
+```
+
+## Structure project after generate
 ```
 .
 ├── cmd
@@ -58,4 +82,4 @@ GLOBAL OPTIONS:
 └── pkg
 ```
 
-## Installation
+You can see more detail in [Base Project](https://github.com/dung13890/go-clean-architecture)
