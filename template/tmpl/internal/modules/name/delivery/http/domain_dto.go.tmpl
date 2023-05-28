@@ -22,8 +22,13 @@ type {{.Domain | capitalize}}Response struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
+// {{.Domain | capitalize}}StatusResponse is struct when success
+type {{.Domain | capitalize}}StatusResponse struct {
+	Status bool `json:"status"`
+}
+
 // convert{{.Domain | capitalize}}RequestToEntity DTO
-func convert{{.Domain | capitalize}}RequestToEntity(request *{{.Domain | capitalize}}Request) *domain.{{.Domain | capitalize}} {
+func convert{{.Domain | capitalize}}RequestToEntity(*{{.Domain | capitalize}}Request) *domain.{{.Domain | capitalize}} {
 	return &domain.{{.Domain | capitalize}}{}
 }
 
