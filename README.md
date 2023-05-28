@@ -33,7 +33,7 @@ GLOBAL OPTIONS:
 
 ## Installation
 ```bash
-go install github.com/dung13890/go-base-gen@@latest
+go install github.com/dung13890/go-base-gen@latest
 ```
 
 ## Using
