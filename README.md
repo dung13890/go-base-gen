@@ -82,4 +82,7 @@ go-base-gen domain --name <domain-name> --project <project-name> --module <modul
 └── pkg
 ```
 
-You can see more detail in [Base Project](https://github.com/dung13890/go-clean-architecture)
+You can see more detail in [go-clean-architecture](https://github.com/dung13890/go-clean-architecture)
+
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/dung13890)
+
