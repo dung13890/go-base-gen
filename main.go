@@ -1,10 +1,10 @@
 package main
 
 import (
-	"go-base-gen/cmd"
 	"log"
 	"os"
 
+	"github.com/dung13890/go-base-gen/cmd"
 	"github.com/urfave/cli/v2"
 )
 
@@ -23,7 +23,7 @@ func main() {
 	domain := cmd.NewDomain()
 
 	app := &cli.App{
-		Name:    "go-base-gen",
+		Name:    "github.com/dung13890/go-base-gen",
 		Suggest: true,
 		Version: version,
 		Usage:   "Use this tool to generate base code",
