@@ -23,7 +23,7 @@ func main() {
 	domain := cmd.NewDomain()
 
 	app := &cli.App{
-		Name:    "github.com/dung13890/go-base-gen",
+		Name:    "go-base-gen",
 		Suggest: true,
 		Version: version,
 		Usage:   "Use this tool to generate base code",
