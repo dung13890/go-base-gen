@@ -36,7 +36,7 @@ GLOBAL OPTIONS:
 go install github.com/dung13890/go-base-gen@latest
 ```
 
-## Using
+## Usage
 - Init Project base on clean architecture
 ```bash
 ## Short
@@ -53,6 +53,31 @@ go-base-gen domain -n <domain-name> -pj <project-name> -m <module-name>
 
 ## Long
 go-base-gen domain --name <domain-name> --project <project-name> --module <module-name> --path <project-path>
+```
+- Example usage
+```bash
+# Genenrate project-demo
+go-base-gen project -n project-demo -p ~/go/src
+
+# cd to project-demo
+cd project-demo/
+
+# download dependencies
+go mod tidy
+
+# create env file
+cp .env.example .env
+
+# setup database
+go run cmd/migrate/main.go 
+go run cmd/seed/main.go
+
+# create domain product in module ecommerce
+go-base-gen domain -n product -pj project-demo -m ecommerce -p ~/go/src
+
+# Run project for development
+make dev
+
 ```
 
 ## Structure project after generate
