@@ -181,6 +181,7 @@ func NewProject() *cli.Command {
 	}
 }
 
+// projectValidate is a function to validate project name
 func projectValidate(ctx *cli.Context) error {
 	if ok := utils.ValidateDash(ctx.String("name")); !ok {
 		return errNameProjectInvalid

@@ -17,7 +17,7 @@ var (
 )
 
 var (
-	errProjectNotExists  = errors.New("Project is not exists!")
+	errProjectNotExists  = errors.New("Project is not exists!. Please create project first!")
 	errNameDomainInvalid = errors.New("Name of domain is invalid!")
 	errProjectInvalid    = errors.New("Name of project is invalid!")
 	errModuleInvalid     = errors.New("Name of module is invalid!")
@@ -42,10 +42,11 @@ var (
 )
 
 type domain struct {
-	Domain  string
-	Project string
-	Module  string
-	Path    string
+	Domain    string
+	Project   string
+	Module    string
+	Path      string
+	ForcePath bool
 }
 
 // NewDomain is a function to create new domain in project
@@ -78,6 +79,11 @@ func NewDomain() *cli.Command {
 				Usage:       "Path is a path to generate for domain will stay in project path",
 				DefaultText: "./",
 			},
+			&cli.BoolFlag{
+				Name:    "force",
+				Aliases: []string{"f"},
+				Usage:   "Force path is a flag to force path to generate for domain will stay in path",
+			},
 		},
 		Action: func(ctx *cli.Context) error {
 			dir, err := os.Getwd()
@@ -98,10 +104,11 @@ func NewDomain() *cli.Command {
 			}
 
 			d := &domain{
-				Domain:  strings.ToLower(ctx.String("name")),
-				Project: strings.ToLower(ctx.String("project")),
-				Module:  strings.ToLower(ctx.String("module")),
-				Path:    rltDir,
+				Domain:    strings.ToLower(ctx.String("name")),
+				Project:   strings.ToLower(ctx.String("project")),
+				Module:    strings.ToLower(ctx.String("module")),
+				Path:      rltDir,
+				ForcePath: ctx.Bool("force"),
 			}
 			if err := d.checkProject(ctx.Context); err != nil {
 				return err
@@ -123,6 +130,7 @@ func NewDomain() *cli.Command {
 	}
 }
 
+// domainValidate is a function to validate input
 func domainValidate(ctx *cli.Context) error {
 	// Validate
 	if ok := utils.ValidateDash(ctx.String("name")); !ok {
@@ -138,11 +146,24 @@ func domainValidate(ctx *cli.Context) error {
 	return nil
 }
 
+// getDir will check path is contain project or not and return path include project
+func getDir(path, project string, forcePath bool) string {
+	if forcePath {
+		return path
+	}
+	if ok := strings.HasSuffix(path, project); ok {
+		return path
+	}
+
+	return filepath.Join(path, project)
+}
+
 // checkProject is a function to check project exist or not
 func (d *domain) checkProject(context.Context) error {
-	dir := filepath.Join(d.Path, d.Project)
+	dir := getDir(d.Path, d.Project, d.ForcePath)
+	modDir := filepath.Join(dir, "go.mod")
 	// Check project exist or not
-	if _, err := os.Stat(dir); errors.Is(err, os.ErrNotExist) {
+	if _, err := os.Stat(modDir); errors.Is(err, os.ErrNotExist) {
 		return errProjectNotExists
 	}
 
@@ -164,7 +185,7 @@ func (*domain) destroy(context.Context) error {
 
 // generateStruct is a function to generate struct for domain
 func (d *domain) generateStruct(context.Context) error {
-	dir := filepath.Join(d.Path, d.Project)
+	dir := getDir(d.Path, d.Project, d.ForcePath)
 	// Generate struct
 	for _, s := range dStructs {
 		target := strings.Replace(s, ":name", d.Module, 1)
@@ -182,7 +203,7 @@ func (d *domain) generateStruct(context.Context) error {
 
 // generateFile is a function to generate file for domain
 func (d *domain) generateFile(_ context.Context) error {
-	dir := filepath.Join(d.Path, d.Project)
+	dir := getDir(d.Path, d.Project, d.ForcePath)
 	tmpl, err := template.NewTemplate("tmpl", []string{
 		"tmpl/*/*.tmpl",
 		"tmpl/*/*/*.tmpl",
