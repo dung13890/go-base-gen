@@ -57,7 +57,7 @@ go-base-gen domain --name <domain-name> --project <project-name> --module <modul
 - Example usage
 ```bash
 # Genenrate project-demo
-go-base-gen project -n project-demo -p ~/go/src
+go-base-gen project -n project-demo
 
 # cd to project-demo
 cd project-demo/
@@ -73,7 +73,7 @@ go run cmd/migrate/main.go
 go run cmd/seed/main.go
 
 # create domain product in module ecommerce
-go-base-gen domain -n product -pj project-demo -m ecommerce -p ~/go/src
+go-base-gen domain -n product -pj project-demo -m ecommerce
 
 # Run project for development
 make dev
