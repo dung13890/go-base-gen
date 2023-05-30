@@ -4,4 +4,23 @@ Mit License (MIT)
 */}}
 
 {{define "internal/usecase/usecase.go"}}package usecase
+
+import (
+	"{{.Project}}/internal/domain"
+	"{{.Project}}/internal/repository"
+)
+
+// Usecase for all usecase
+type Usecase struct {
+	{{.Domain | capitalize}}UC domain.{{.Domain | capitalize}}Usecase
+}
+
+// NewUsecase implements from interface
+func NewUsecase(
+	repo *repository.Repository,
+) *Usecase {
+	return &Usecase{
+		{{.Domain | capitalize}}UC: New{{.Domain | capitalize}}Usecase(repo.{{.Domain | capitalize}}R),
+	}
+}
 {{end}}

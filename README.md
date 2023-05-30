@@ -14,7 +14,7 @@ USAGE:
    go-base-gen [global options] command [command options] [arguments...]
 
 VERSION:
-   v1.0.4
+   v1.0.6
 
 COMMANDS:
    project  Generate base code for go project use clean architecture
