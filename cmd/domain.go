@@ -27,6 +27,12 @@ var (
 		"internal/modules/:name/usecase",
 		"internal/modules/:name/repository",
 	}
+	dStructsWithoutModule = []string{
+		"internal/domain",
+		"internal/delivery/http",
+		"internal/usecase",
+		"internal/repository",
+	}
 	dFiles = []string{
 		"internal/domain/domain.go.tmpl",
 		"internal/modules/name/delivery/http/domain_http.go.tmpl",
@@ -38,6 +44,18 @@ var (
 		"internal/modules/name/repository/domain_repo.go.tmpl",
 		"internal/modules/name/repository/domain_dao.go.tmpl",
 		"internal/modules/name/repository/repository.go.tmpl",
+	}
+	dFilesWithoutModule = []string{
+		"internal/domain/domain.go.tmpl",
+		"internal/delivery/http/domain_http.go.tmpl",
+		"internal/delivery/http/domain_dto.go.tmpl",
+		"internal/delivery/http/handler.go.tmpl",
+		"internal/delivery/http/middleware.go.tmpl",
+		"internal/usecase/domain_uc.go.tmpl",
+		"internal/usecase/usecase.go.tmpl",
+		"internal/repository/domain_repo.go.tmpl",
+		"internal/repository/domain_dao.go.tmpl",
+		"internal/repository/repository.go.tmpl",
 	}
 )
 
@@ -185,12 +203,13 @@ func (*domain) destroy(context.Context) error {
 // generateStruct is a function to generate struct for domain
 func (d *domain) generateStruct(context.Context) error {
 	dir := getDir(d.Path, d.Project, d.ForcePath)
+	structs := dStructsWithoutModule
+	if d.Module != "" {
+		structs = dStructs
+	}
 	// Generate struct
-	for _, s := range dStructs {
-		target := strings.Replace(s, "/modules/:name/", "/", 1)
-		if d.Module != "" {
-			target = strings.Replace(s, ":name", d.Module, 1)
-		}
+	for _, s := range structs {
+		target := strings.Replace(s, ":name", d.Module, 1)
 		// Check directory exist or not
 		if _, err := os.Stat(filepath.Join(dir, target)); !errors.Is(err, os.ErrNotExist) {
 			continue
@@ -209,18 +228,15 @@ func (d *domain) generateFile(_ context.Context) error {
 	tmpl, err := template.NewTemplate("tmpl", []string{
 		"tmpl/*/*.tmpl",
 		"tmpl/*/*/*.tmpl",
+		"tmpl/*/*/*/*.tmpl",
 		"tmpl/*/*/*/*/*.tmpl",
 		"tmpl/*/*/*/*/*/*.tmpl",
 	})
 	if err != nil {
 		return err
 	}
-	rplModule := "/"
-	if d.Module != "" {
-		rplModule = "/modules/" + d.Module + "/"
-	}
 	rl := strings.NewReplacer(
-		"/modules/name/", rplModule,
+		"/modules/name/", "/modules/"+d.Module+"/",
 		"domain.go", d.Domain+".go",
 		"domain_http.go", d.Domain+"_http.go",
 		"domain_grpc.go", d.Domain+"_grpc.go",
@@ -229,7 +245,11 @@ func (d *domain) generateFile(_ context.Context) error {
 		"domain_dao.go", d.Domain+"_dao.go",
 		"domain_uc.go", d.Domain+"_uc.go",
 	)
-	for _, f := range dFiles {
+	files := dFilesWithoutModule
+	if d.Module != "" {
+		files = dFiles
+	}
+	for _, f := range files {
 		index := strings.TrimSuffix(f, ".tmpl")
 		target := filepath.Join(dir, rl.Replace(index))
 

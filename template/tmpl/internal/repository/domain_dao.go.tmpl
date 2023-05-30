@@ -1,0 +1,42 @@
+{{/*
+Copyright (c) 2023 dung13890. All rights reserved.
+Mit License (MIT)
+*/}}
+
+{{define "internal/repository/domain_dao.go"}}package repository
+
+import (
+	"{{.Project}}/internal/domain"
+
+	"gorm.io/gorm"
+)
+
+// {{.Domain | capitalize}} DAO model
+type {{.Domain | capitalize}} struct {
+	gorm.Model
+}
+
+// convert{{.Domain | capitalize}}ToEntity .-
+func convert{{.Domain | capitalize}}ToEntity(dao *{{.Domain | capitalize}}) *domain.{{.Domain | capitalize}} {
+	e := &domain.{{.Domain | capitalize}}{
+		ID:        dao.ID,
+		CreatedAt: dao.CreatedAt,
+		UpdatedAt: dao.UpdatedAt,
+	}
+
+	return e
+}
+
+// convert{{.Domain | capitalize}}ToDao .-
+func convert{{.Domain | capitalize}}ToDao(entity *domain.{{.Domain | capitalize}}) *{{.Domain | capitalize}} {
+	d := &{{.Domain | capitalize}}{
+		Model: gorm.Model{
+			ID:        entity.ID,
+			CreatedAt: entity.CreatedAt,
+			UpdatedAt: entity.UpdatedAt,
+		},
+	}
+
+	return d
+}
+{{end}}
