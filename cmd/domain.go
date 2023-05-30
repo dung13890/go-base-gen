@@ -58,20 +58,19 @@ func NewDomain() *cli.Command {
 			&cli.StringFlag{
 				Name:     "name",
 				Aliases:  []string{"n"},
-				Usage:    "Name of domain (ex: product)",
+				Usage:    "Name of domain is required! (ex: product)",
 				Required: true,
 			},
 			&cli.StringFlag{
 				Name:     "project",
 				Aliases:  []string{"pj"},
-				Usage:    "Name of project (ex: project-demo)",
+				Usage:    "Name of project is required! (ex: project-demo)",
 				Required: true,
 			},
 			&cli.StringFlag{
-				Name:     "module",
-				Aliases:  []string{"m"},
-				Usage:    "Name of module inside project (ex: ecommerce)",
-				Required: true,
+				Name:    "module",
+				Aliases: []string{"m"},
+				Usage:   "Name of module inside project (ex: ecommerce)",
 			},
 			&cli.StringFlag{
 				Name:        "path",
@@ -188,7 +187,10 @@ func (d *domain) generateStruct(context.Context) error {
 	dir := getDir(d.Path, d.Project, d.ForcePath)
 	// Generate struct
 	for _, s := range dStructs {
-		target := strings.Replace(s, ":name", d.Module, 1)
+		target := strings.Replace(s, "/modules/:name/", "/", 1)
+		if d.Module != "" {
+			target = strings.Replace(s, ":name", d.Module, 1)
+		}
 		// Check directory exist or not
 		if _, err := os.Stat(filepath.Join(dir, target)); !errors.Is(err, os.ErrNotExist) {
 			continue
@@ -213,8 +215,12 @@ func (d *domain) generateFile(_ context.Context) error {
 	if err != nil {
 		return err
 	}
+	rplModule := "/"
+	if d.Module != "" {
+		rplModule = "/modules/" + d.Module + "/"
+	}
 	rl := strings.NewReplacer(
-		"/modules/name/", "/modules/"+d.Module+"/",
+		"/modules/name/", rplModule,
 		"domain.go", d.Domain+".go",
 		"domain_http.go", d.Domain+"_http.go",
 		"domain_grpc.go", d.Domain+"_grpc.go",
