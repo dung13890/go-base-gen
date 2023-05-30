@@ -11,7 +11,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// NewHandler will initialize the {{.Module}} module endpoints
+// NewHandler will initialize the endpoints
 func NewHandler(g *echo.Group, uc *usecase.Usecase) {
 	// {{.Domain}}Handler will initialize the {{.Domain}}/ resources endpoint
 	{{.Domain}}Handler := &{{.Domain | capitalize}}Handler{

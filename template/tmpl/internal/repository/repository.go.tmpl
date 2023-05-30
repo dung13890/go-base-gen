@@ -4,4 +4,20 @@ Mit License (MIT)
 */}}
 
 {{define "internal/repository/repository.go"}}package repository
+
+import (
+	"{{.Project}}/internal/domain"
+)
+
+// Repository for all repository
+type Repository struct {
+	{{.Domain | capitalize}}R domain.{{.Domain | capitalize}}Repository
+}
+
+// NewRepository will create new postgres object
+func NewRepository() *Repository {
+	return &Repository{
+		{{.Domain | capitalize}}R: &{{.Domain | capitalize}}Repository{},
+	}
+}
 {{end}}
