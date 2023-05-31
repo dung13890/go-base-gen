@@ -100,15 +100,11 @@ make dev
 │   │   └── service
 │   ├── modules
 │   │   └── auth
+│   │   │   ├── delivery
+│   │   │   ├── repository
+│   │   │   └── usecase
 │   └── registry
 └── pkg
-    ├── cache
-    ├── errors
-    ├── logger
-    ├── postgres
-    ├── redis
-    ├── utils
-    └── validate
 ```
 
 You can see more detail in [go-clean-architecture](https://github.com/dung13890/go-clean-architecture)
