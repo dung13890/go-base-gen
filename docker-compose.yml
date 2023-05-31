@@ -13,8 +13,8 @@ services:
     stdin_open: true
     tty: true
     volumes:
-      - ./:/var/www/app
-    working_dir: /var/www/app
+      - ./:/go/src/app
+    working_dir: /go/src/app
 networks:
   go-app-net:
     driver: bridge

@@ -14,7 +14,7 @@ USAGE:
    go-base-gen [global options] command [command options] [arguments...]
 
 VERSION:
-   v1.0.6
+   v1.0.8
 
 COMMANDS:
    project  Generate base code for go project use clean architecture
@@ -95,14 +95,14 @@ make dev
 │   ├── app
 │   ├── constants
 │   ├── domain
-│   │   └── auth
-│   │       ├── delivery
-│   │       ├── repository
-│   │       └── usecase
 │   ├── impl
 │   │   ├── pubsub
 │   │   └── service
 │   ├── modules
+│   │   └── auth
+│   │   │   ├── delivery
+│   │   │   ├── repository
+│   │   │   └── usecase
 │   └── registry
 └── pkg
 ```
