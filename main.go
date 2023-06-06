@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	version string = "v1.0.8"
+	version string = "v1.0.9"
 )
 
 func main() {

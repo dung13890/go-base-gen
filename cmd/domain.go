@@ -121,7 +121,7 @@ func NewDomain() *cli.Command {
 			}
 
 			d := &domain{
-				Domain:    strings.ToLower(ctx.String("name")),
+				Domain:    ctx.String("name"),
 				Project:   strings.ToLower(ctx.String("project")),
 				Module:    strings.ToLower(ctx.String("module")),
 				Path:      rltDir,
@@ -235,15 +235,16 @@ func (d *domain) generateFile(_ context.Context) error {
 	if err != nil {
 		return err
 	}
+	snakeDomain := utils.ToSnakeCase(d.Domain)
 	rl := strings.NewReplacer(
 		"/modules/name/", "/modules/"+d.Module+"/",
-		"domain.go", d.Domain+".go",
-		"domain_http.go", d.Domain+"_http.go",
-		"domain_grpc.go", d.Domain+"_grpc.go",
-		"domain_dto.go", d.Domain+"_dto.go",
-		"domain_repo.go", d.Domain+"_repo.go",
-		"domain_dao.go", d.Domain+"_dao.go",
-		"domain_uc.go", d.Domain+"_uc.go",
+		"domain.go", snakeDomain+".go",
+		"domain_http.go", snakeDomain+"_http.go",
+		"domain_grpc.go", snakeDomain+"_grpc.go",
+		"domain_dto.go", snakeDomain+"_dto.go",
+		"domain_repo.go", snakeDomain+"_repo.go",
+		"domain_dao.go", snakeDomain+"_dao.go",
+		"domain_uc.go", snakeDomain+"_uc.go",
 	)
 	files := dFilesWithoutModule
 	if d.Module != "" {
