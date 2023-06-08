@@ -16,9 +16,9 @@ import (
 	"{{.Project}}/internal/constants"
 	"{{.Project}}/internal/registry"
 	"{{.Project}}/pkg/cache"
+	"{{.Project}}/pkg/database"
 	"{{.Project}}/pkg/errors"
 	"{{.Project}}/pkg/logger"
-	"{{.Project}}/pkg/postgres"
 	"{{.Project}}/pkg/redis"
 
 	"github.com/labstack/echo/v4"
@@ -31,7 +31,7 @@ func Run(conf config.AppConfig) error {
 	var db *gorm.DB
 	var err error
 	for {
-		db, err = postgres.NewGormDB(dbConf)
+		db, err = database.NewGormDB(dbConf)
 		if err != nil {
 			logger.Info().Printf("Wait for starting db: %v", err)
 			time.Sleep(constants.ConnectWaitDuration)

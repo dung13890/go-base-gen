@@ -13,11 +13,4 @@ import (
 type Repository struct {
 	{{.Domain | capitalize}}R domain.{{.Domain | capitalize}}Repository
 }
-
-// NewRepository will create new postgres object
-func NewRepository() *Repository {
-	return &Repository{
-		{{.Domain | capitalize}}R: &{{.Domain | capitalize}}Repository{},
-	}
-}
 {{end}}
