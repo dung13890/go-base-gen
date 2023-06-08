@@ -7,19 +7,10 @@ Mit License (MIT)
 
 import (
 	"{{.Project}}/internal/domain"
-
-	"gorm.io/gorm"
 )
 
 // Repository for module auth
 type Repository struct {
 	{{.Domain | capitalize}}R domain.{{.Domain | capitalize}}Repository
-}
-
-// NewRepository will create new postgres object
-func NewRepository(db *gorm.DB) *Repository {
-	return &Repository{
-		{{.Domain | capitalize}}R: &{{.Domain | capitalize}}Repository{DB: db},
-	}
 }
 {{end}}

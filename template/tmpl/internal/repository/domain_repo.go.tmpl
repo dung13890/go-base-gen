@@ -19,6 +19,13 @@ type {{.Domain | capitalize}}Repository struct {
 	*gorm.DB
 }
 
+// New{{.Domain | capitalize}}Repository will implement of domain.{{.Domain | capitalize}}Repository interface
+func New{{.Domain | capitalize}}Repository(db *gorm.DB) *{{.Domain | capitalize}}Repository {
+	return &{{.Domain | capitalize}}Repository{
+		DB: db,
+	}
+}
+
 // Fetch will fetch content from db
 func (rp *{{.Domain | capitalize}}Repository) Fetch(ctx context.Context) ([]domain.{{.Domain | capitalize}}, error) {
 	dao := []{{.Domain | capitalize}}{}

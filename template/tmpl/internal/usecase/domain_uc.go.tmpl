@@ -17,7 +17,7 @@ type {{.Domain | capitalize}}Usecase struct {
 	repo domain.{{.Domain | capitalize}}Repository
 }
 
-// New{{.Domain | capitalize}}Usecase will create new an {{.Domain}}Usecase object representation of domain.{{.Domain | capitalize}}Usecase interface
+// New{{.Domain | capitalize}}Usecase will implement of domain.{{.Domain | capitalize}}Usecase interface
 func New{{.Domain | capitalize}}Usecase(repo domain.{{.Domain | capitalize}}Repository) *{{.Domain | capitalize}}Usecase {
 	return &{{.Domain | capitalize}}Usecase{
 		repo: repo,
