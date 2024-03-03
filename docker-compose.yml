@@ -7,7 +7,7 @@ services:
       context: ./
       dockerfile: ./docker/Dockerfile
     platform: linux/amd64
-    image: go-app:1.20
+    image: go-app:1.22
     networks:
       - go-app-net
     stdin_open: true
