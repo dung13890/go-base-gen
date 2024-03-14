@@ -12,10 +12,10 @@ jobs:
 
     - uses: actions/setup-go@v4
       with:
-        go-version: 1.20.0
+        go-version: 1.22
 
     - name: run lint
       uses: golangci/golangci-lint-action@v3
       with:
-        version: v1.52.2
+        version: v1.56.2
         args: --config=./.golangci.yaml --timeout=10m
