@@ -16,7 +16,7 @@ type user struct {
 	gorm.Model
 }
 
-// convertuserToEntity .-
+// convertUserToEntity .-
 func convertUserToEntity(dao *user) *entity.User {
 	e := &entity.User{
 		ID:        dao.ID,

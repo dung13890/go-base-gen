@@ -6,14 +6,7 @@ Mit License (MIT)
 {{define "internal/delivery/http/domain_handler.go"}}package http
 
 import (
-	"net/http"
-	"strconv"
-
-	"{{.Project}}/internal/delivery/http/dto"
 	"{{.Project}}/internal/usecase/{{.Domain | snakecase}}"
-	"{{.Project}}/pkg/errors"
-
-	"github.com/labstack/echo/v4"
 )
 
 // {{.Domain}}Handler represent the http handler
@@ -26,20 +19,5 @@ func New{{.Domain | capitalize}}Handler(usecase *{{.Domain}}.Usecase) *{{.Domain
 	return &{{.Domain}}Handler{
 		usecase: usecase,
 	}
-}
-
-// Show will Find data
-func (hl *{{.Domain}}Handler) Show(c echo.Context) error {
-	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
-	if err != nil {
-		return errors.ErrBadRequest.Wrap(err)
-	}
-	ctx := c.Request().Context()
-	item, err := hl.usecase.Find(ctx, id)
-	if err != nil {
-		return errors.Throw(err)
-	}
-
-	return c.JSON(http.StatusOK, dto.Convert{{.Domain | capitalize}}EntityToResponse(item))
 }
 {{end}}

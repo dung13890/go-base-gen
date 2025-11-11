@@ -16,7 +16,7 @@ type {{.Domain}} struct {
 	gorm.Model
 }
 
-// convert{{.Domain}}ToEntity .-
+// convert{{.Domain | capitalize}}ToEntity .-
 func convert{{.Domain | capitalize}}ToEntity(dao *{{.Domain}}) *entity.{{.Domain | capitalize}} {
 	e := &entity.{{.Domain | capitalize}}{
 		ID:        dao.ID,

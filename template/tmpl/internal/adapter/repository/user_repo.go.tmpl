@@ -7,6 +7,7 @@ Mit License (MIT)
 
 import (
 	"context"
+
 	"{{.Project}}/internal/domain/entity"
 	"{{.Project}}/internal/domain/repository"
 	"{{.Project}}/pkg/errors"
@@ -24,19 +25,6 @@ func NewUserRepository(db *gorm.DB) repository.UserRepository {
 	return &userRepository{
 		DB: db,
 	}
-}
-
-// Find will find content from db
-func (rp *userRepository) Find(ctx context.Context, id uint) (*entity.User, error) {
-	dao := user{}
-	if err := rp.DB.WithContext(ctx).First(&dao, id).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errors.ErrNotFound.Wrap(err)
-		}
-		return nil, errors.ErrUnexpectedDBError.Wrap(err)
-	}
-
-	return convertUserToEntity(&dao), nil
 }
 
 // FindByEmail find content by email from db

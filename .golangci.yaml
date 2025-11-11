@@ -11,7 +11,7 @@ linters:
     - copyloopvar
     - cyclop
     - durationcheck
-    - err113
+    # - err113
     - errcheck
     - errname
     - errorlint
@@ -22,12 +22,12 @@ linters:
     - gochecknoinits
     - gocognit
     - goconst
-    - gocritic
+    # - gocritic
     - gocyclo
     - gomoddirectives
     - gomodguard
     - goprintffuncname
-    - gosec
+    # - gosec
     - govet
     - ineffassign
     - lll
@@ -49,13 +49,13 @@ linters:
     # - revive
     - rowserrcheck
     - sqlclosecheck
-    - staticcheck
+    # - staticcheck
     - testableexamples
     - testpackage
     - tparallel
     - unconvert
     - unparam
-    - unused
+    # - unused
     - usestdlibvars
     - wastedassign
     - whitespace

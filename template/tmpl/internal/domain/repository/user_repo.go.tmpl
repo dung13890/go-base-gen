@@ -15,7 +15,6 @@ import (
 
 // UserRepository represent the User's repository contract
 type UserRepository interface {
-	Find(context.Context, uint) (*entity.User, error)
 	FindByEmail(context.Context, string) (*entity.User, error)
 }
 {{end}}

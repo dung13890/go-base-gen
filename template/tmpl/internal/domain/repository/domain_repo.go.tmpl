@@ -7,14 +7,7 @@ Mit License (MIT)
 
 package repository
 
-import (
-	"context"
-
-	"{{.Project}}/internal/domain/entity"
-)
-
 // {{.Domain | capitalize}}Repository represent the {{.Domain | capitalize}}'s repository contract
 type {{.Domain | capitalize}}Repository interface {
-	Find(context.Context, uint) (*entity.{{.Domain | capitalize}}, error)
 }
 {{end}}

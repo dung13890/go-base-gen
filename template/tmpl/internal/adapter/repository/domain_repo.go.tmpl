@@ -6,10 +6,7 @@ Mit License (MIT)
 {{define "internal/adapter/repository/domain_repo.go"}}package repository
 
 import (
-	"context"
-	"{{.Project}}/internal/domain/entity"
 	"{{.Project}}/internal/domain/repository"
-	"{{.Project}}/pkg/errors"
 
 	"gorm.io/gorm"
 )
@@ -24,18 +21,5 @@ func New{{.Domain | capitalize}}Repository(db *gorm.DB) repository.{{.Domain | c
 	return &{{.Domain}}Repository{
 		DB: db,
 	}
-}
-
-// Find will find content from db
-func (rp *{{.Domain}}Repository) Find(ctx context.Context, id uint) (*entity.{{.Domain | capitalize}}, error) {
-	dao := {{.Domain}}{}
-	if err := rp.DB.WithContext(ctx).First(&dao, id).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errors.ErrNotFound.Wrap(err)
-		}
-		return nil, errors.ErrUnexpectedDBError.Wrap(err)
-	}
-
-	return convert{{.Domain | capitalize}}ToEntity(&dao), nil
 }
 {{end}}

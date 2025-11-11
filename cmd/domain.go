@@ -3,8 +3,10 @@ package cmd
 import (
 	"context"
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/dung13890/go-base-gen/pkg/utils"
@@ -73,8 +75,8 @@ func NewDomain() *cli.Command {
 				Name:        "path",
 				Aliases:     []string{"p"},
 				Usage:       "Path is a path to generate for domain will stay in project path",
-				DefaultText: "project_new",
-				Value:       "project_new",
+				DefaultText: "./",
+				Value:       "./",
 			},
 			&cli.BoolFlag{
 				Name:    "force",
@@ -119,6 +121,9 @@ func NewDomain() *cli.Command {
 				}
 				return err
 			}
+			// if err := d.updateRegistry(ctx.Context); err != nil {
+			// 		return err
+			// }
 
 			fCreated = []string{}
 			return cli.Exit("Successfully created!", 0)
@@ -194,7 +199,7 @@ func (d *domain) generateStruct(context.Context) error {
 }
 
 // generateFile is a function to generate file for domain
-func (d *domain) generateFile(_ context.Context) error {
+func (d *domain) generateFile(context.Context) error {
 	dir := getDir(d.Path, d.ForcePath)
 	tmpl, err := template.NewTemplate("tmpl", []string{
 		"tmpl/*/*/*.tmpl",
@@ -237,6 +242,48 @@ func (d *domain) generateFile(_ context.Context) error {
 		if err := f.Close(); err != nil {
 			return err
 		}
+	}
+
+	return nil
+}
+
+// updateRegistry is a function to update registry for domain
+func (d *domain) updateRegistry(context.Context) error {
+	dir := getDir(d.Path, d.ForcePath)
+	registryPath := filepath.Join(dir, "internal/registry/registry.go")
+
+	// Check if the registry file exists
+	if _, err := os.Stat(registryPath); errors.Is(err, os.ErrNotExist) {
+		return errors.New("registry file does not exist")
+	}
+
+	// Read the content of the registry file
+	content, err := os.ReadFile(registryPath)
+	if err != nil {
+		return fmt.Errorf("failed to read registry file: %w", err)
+	}
+
+	// Prepare the new usecase import and initialization code
+	usecaseImport := fmt.Sprintf("\t\"%s/internal/usecase/%s\"\n", d.Project, utils.ToSnakeCase(d.Domain))
+	usecaseCode := fmt.Sprintf("\t%sUc *%s.Usecase\n", d.Domain, utils.ToSnakeCase(d.Domain))
+	initCode := fmt.Sprintf("\t\t%sUc: %s.NewUsecase(),\n", d.Domain, utils.ToSnakeCase(d.Domain))
+
+	// Check and append the import if not already present
+	if !strings.Contains(string(content), usecaseImport) {
+		content = append([]byte(usecaseImport), content...)
+	}
+
+	// Append the usecase code in the Registry struct
+	regexStruct := regexp.MustCompile(`// <!-- Add domain usecases here -->`)
+	content = regexStruct.ReplaceAll(content, []byte("// <!-- Add domain usecases here -->\n"+usecaseCode))
+
+	// Append the initialization code in the NewRegistry function
+	regexInit := regexp.MustCompile(`// <!-- Initialize other domain usecases here -->`)
+	content = regexInit.ReplaceAll(content, []byte("// <!-- Initialize other domain usecases here -->\n"+initCode))
+
+	// Write the updated content back to the registry file
+	if err := os.WriteFile(registryPath, content, os.ModePerm); err != nil {
+		return errors.New("failed to write updated registry file")
 	}
 
 	return nil

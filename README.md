@@ -1,113 +1,118 @@
 # go-base-gen
+
 ![workflow status](https://github.com/dung13890/go-base-gen/actions/workflows/go-ci.yml/badge.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
+A command-line tool to quickly generate Go projects using clean architecture principles.
 
-## Overview
-Command line tool to generate a project from a template. It is a tool that helps you to init code base and start a new project quickly.
+## What It Does
 
-```bash
-NAME:
-   go-base-gen - Use this tool to generate base code
-
-USAGE:
-   go-base-gen [global options] command [command options] [arguments...]
-
-VERSION:
-   v1.0.10
-
-COMMANDS:
-   project  Generate base code for go project use clean architecture
-   domain   Create new domain in project
-   help, h  Shows a list of commands or help for one command
-
-GLOBAL OPTIONS:
-   --help, -h     show help
-   --version, -v  print only the version (default: false)
-```
-
-## Features
-- [x] Generate project base on clean architecture
-- [x] Generate module
-
+- 🚀 **Generate Project**: Creates a complete Go project structure based on [clean architecture](https://github.com/dung13890/go-clean-architecture)
+- 📦 **Generate Domain**: Adds new domain modules to your existing project
 
 ## Installation
+
 ```bash
 go install github.com/dung13890/go-base-gen@latest
 ```
 
-## Usage
-- Init Project base on clean architecture
-```bash
-## Short
-go-base-gen project -n <project-name>
+## Quick Start
 
-## Long
-go-base-gen project --name <project-name> --path <project-path>
+### 1. Create a New Project
+
+```bash
+go-base-gen project --pkg github.com/yourusername/yourproject --path yourproject
 ```
 
-- Create new domain
-```bash
-## Short
-go-base-gen domain -n <domain-name> -pj <project-name> -m <module-name>
+**Parameters:**
+- `--pkg`: Your project's Go module path (required)
+- `--path`: Directory where the project will be created (optional, defaults to current directory)
 
-## Long
-go-base-gen domain --name <domain-name> --project <project-name> --module <module-name> --path <project-path>
+### 2. Set Up Your Project
+
+```bash
+cd yourproject
+go mod tidy              # Download dependencies
+cp .env.example .env     # Create environment configuration
+go run cmd/migrate/main.go  # Set up database
 ```
-- Example usage
+
+### 3. Add a New Domain
+
 ```bash
-# Genenrate project-demo
-go-base-gen project -n project-demo
+go-base-gen domain --dn product --pkg github.com/yourusername/yourproject
+```
 
-# cd to project-demo
-cd project-demo/
+**Parameters:**
+- `--dn`: Domain name (e.g., user, product, order)
+- `--pkg`: Your project's Go module path (same as project creation)
+- `--path`: Project directory (optional)
 
-# download dependencies
+### 4. Run Your Project
+
+```bash
+make dev
+```
+
+## Complete Example
+
+```bash
+# Step 1: Generate project
+go-base-gen project --pkg github.com/johndoe/shopapi --path shopapi
+
+# Step 2: Navigate to project
+cd shopapi
+
+# Step 3: Install dependencies
 go mod tidy
 
-# create env file
+# Step 4: Configure environment
 cp .env.example .env
+# Edit .env with your database credentials
 
-# setup database
-go run cmd/migrate/main.go 
-go run cmd/seed/main.go
+# Step 5: Initialize database
+go run cmd/migrate/main.go
 
-# create domain product in module ecommerce
-go-base-gen domain -n product -pj project-demo -m ecommerce
+# Step 6: Create domains
+go-base-gen domain --dn product --pkg github.com/johndoe/shopapi
+go-base-gen domain --dn customer --pkg github.com/johndoe/shopapi
 
-# Run project for development
+# Step 7: Start development server
 make dev
-
 ```
 
-## Structure project after generate
-```
-.
-├── cmd
-│   ├── app
-│   ├── migrate
-│   └── seed
-├── config
-├── db
-│   ├── migrations
-│   └── seeds
-├── internal
-│   ├── app
-│   ├── constants
-│   ├── domain
-│   ├── impl
-│   │   ├── pubsub
-│   │   └── service
-│   ├── modules
-│   │   └── auth
-│   │   │   ├── delivery
-│   │   │   ├── repository
-│   │   │   └── usecase
-│   └── registry
-└── pkg
+## Commands Reference
+
+```bash
+# Show help
+go-base-gen --help
+
+# Generate project
+go-base-gen project --pkg <module-path> [--path <directory>]
+
+# Generate domain
+go-base-gen domain --dn <domain-name> --pkg <module-path> [--path <directory>]
+
+# Show version
+go-base-gen --version
 ```
 
-You can see more detail in [go-clean-architecture](https://github.com/dung13890/go-clean-architecture)
+## Project Structure
+
+After generation, your project will follow clean architecture with:
+- **API Layer**: HTTP handlers and routing
+- **Use Cases**: Business logic
+- **Repositories**: Data access layer
+- **Entities**: Domain models
+
+Learn more about the architecture in the [go-clean-architecture repository](https://github.com/dung13890/go-clean-architecture).
+
+## Support
+
+If you find this tool helpful, consider:
 
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/dung13890)
 
+## License
+
+MIT License - see [LICENSE](https://opensource.org/licenses/MIT) for details.

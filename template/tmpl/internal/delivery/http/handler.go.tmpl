@@ -28,7 +28,7 @@ func NewHTTPHandler(
 	// <!-- Add other handlers here -->
 
 	// routes
-	g.GET("/auths/", authHandler.SignIn)
+	g.POST("/auth/sign-in", authHandler.SignIn)
 	// <!-- Add other routes here -->
 }
 {{end}}
