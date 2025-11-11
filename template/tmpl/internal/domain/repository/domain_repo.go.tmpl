@@ -1,0 +1,13 @@
+{{/*
+Copyright (c) 2025 dung13890. All rights reserved.
+Mit License (MIT)
+*/}}
+
+{{define "internal/domain/repository/domain_repo.go"}}//go:generate mockgen -source=$GOFILE -destination=mock/{{.Domain}}_repo_mock.go
+
+package repository
+
+// {{.Domain | capitalize}}Repository represent the {{.Domain | capitalize}}'s repository contract
+type {{.Domain | capitalize}}Repository interface {
+}
+{{end}}

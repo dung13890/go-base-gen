@@ -1,0 +1,38 @@
+{{/*
+Copyright (c) 2025 dung13890. All rights reserved.
+Mit License (MIT)
+*/}}
+
+{{define "internal/registry/registry.go"}}package registry
+
+import (
+	"{{.Project}}/internal/adapter/cache"
+	"{{.Project}}/internal/adapter/repository"
+	"{{.Project}}/internal/service"
+	"{{.Project}}/internal/usecase/auth"
+
+	"github.com/redis/go-redis/v9"
+	"gorm.io/gorm"
+)
+
+// Registry struct
+type Registry struct {
+	// <!-- Add domain usecases here -->
+	AuthUc *auth.Usecase
+}
+
+// NewRegistry will create new registry
+func NewRegistry(db *gorm.DB, rdb *redis.Client) *Registry {
+	// Initialize repositories
+	userRepo := repository.NewUserRepository(db)
+
+	cm := cache.NewRedisStore(rdb)
+	// Initialize services with adapters
+	jwtSvc := service.NewJWTService(cm)
+
+	return &Registry{
+		AuthUc: auth.NewUsecase(jwtSvc, userRepo),
+		// <!-- Initialize other domain usecases here -->
+	}
+}
+{{end}}

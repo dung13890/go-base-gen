@@ -1,0 +1,23 @@
+{{/*
+Copyright (c) 2025 dung13890. All rights reserved.
+Mit License (MIT)
+*/}}
+
+{{define "internal/delivery/http/domain_handler.go"}}package http
+
+import (
+	"{{.Project}}/internal/usecase/{{.Domain | snakecase}}"
+)
+
+// {{.Domain}}Handler represent the http handler
+type {{.Domain}}Handler struct {
+	usecase *{{.Domain}}.Usecase
+}
+
+// New{{.Domain | capitalize}}Handler will create new an {{.Domain}}Handler object
+func New{{.Domain | capitalize}}Handler(usecase *{{.Domain}}.Usecase) *{{.Domain}}Handler {
+	return &{{.Domain}}Handler{
+		usecase: usecase,
+	}
+}
+{{end}}

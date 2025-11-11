@@ -18,27 +18,25 @@ var (
 	pStructs              = []string{
 		"cmd/app",
 		"cmd/migrate",
-		"cmd/seed",
-		"config",
 		"db/migrations",
-		"db/seeds",
-		"internal/app",
-		"internal/constants",
-		"internal/domain",
-		"internal/modules/auth/delivery/http",
-		"internal/modules/auth/delivery/grpc",
-		"internal/modules/auth/repository",
-		"internal/modules/auth/usecase",
-		"internal/impl/pubsub",
-		"internal/impl/service",
+		"internal/adapter/repository",
+		"internal/adapter/cache",
 		"internal/registry",
-		"pkg/cache",
-		"pkg/errors",
+		"internal/delivery/http",
+		"internal/delivery/http/dto",
+		"internal/service",
+		"internal/infrastructure/config",
+		"internal/infrastructure/constants",
+		"internal/infrastructure/database",
+		"internal/infrastructure/redis",
+		"internal/usecase",
+		"internal/domain/entity",
+		"internal/domain/repository",
+		"internal/domain/service",
+		"internal/usecase/auth",
 		"pkg/logger",
-		"pkg/database",
-		"pkg/redis",
 		"pkg/utils",
-		"pkg/validate",
+		"pkg/errors",
 	}
 
 	pFiles = []string{
@@ -48,63 +46,35 @@ var (
 		"go.mod.tmpl",
 		"Makefile.tmpl",
 		"cmd/app/main.go.tmpl",
-		"cmd/app/air.toml.tmpl",
 		"cmd/migrate/main.go.tmpl",
-		"cmd/seed/main.go.tmpl",
-		"config/app.go.tmpl",
-		"config/database.go.tmpl",
-		"config/redis.go.tmpl",
 		"db/migrations/20220705080200_create_auth_table.down.sql.tmpl",
 		"db/migrations/20220705080200_create_auth_table.up.sql.tmpl",
-		"db/seeds/data.json.tmpl",
-		"internal/app/app.go.tmpl",
-		"internal/app/seed.go.tmpl",
-		"internal/constants/http.go.tmpl",
-		"internal/domain/auth.go.tmpl",
-		"internal/domain/role.go.tmpl",
-		"internal/domain/user.go.tmpl",
-		"internal/domain/password_reset.go.tmpl",
-		"internal/domain/jwt_svc.go.tmpl",
-		"internal/domain/throttle_svc.go.tmpl",
-		"internal/impl/service/jwt_svc.go.tmpl",
-		"internal/impl/service/throttle_svc.go.tmpl",
-		"internal/modules/auth/delivery/http/middleware.go.tmpl",
-		"internal/modules/auth/delivery/http/handler.go.tmpl",
-		"internal/modules/auth/delivery/http/auth_dto.go.tmpl",
-		"internal/modules/auth/delivery/http/auth_http.go.tmpl",
-		"internal/modules/auth/delivery/http/role_dto.go.tmpl",
-		"internal/modules/auth/delivery/http/role_http.go.tmpl",
-		"internal/modules/auth/delivery/http/user_dto.go.tmpl",
-		"internal/modules/auth/delivery/http/user_http.go.tmpl",
-		"internal/modules/auth/repository/repository.go.tmpl",
-		"internal/modules/auth/repository/password_reset_dao.go.tmpl",
-		"internal/modules/auth/repository/password_reset_repo.go.tmpl",
-		"internal/modules/auth/repository/role_dao.go.tmpl",
-		"internal/modules/auth/repository/role_repo.go.tmpl",
-		"internal/modules/auth/repository/user_dao.go.tmpl",
-		"internal/modules/auth/repository/user_repo.go.tmpl",
-		"internal/modules/auth/usecase/usecase.go.tmpl",
-		"internal/modules/auth/usecase/auth_uc.go.tmpl",
-		"internal/modules/auth/usecase/user_uc.go.tmpl",
-		"internal/modules/auth/usecase/role_uc.go.tmpl",
-		"internal/registry/http.go.tmpl",
-		"internal/registry/repository.go.tmpl",
-		"internal/registry/service.go.tmpl",
-		"internal/registry/usecase.go.tmpl",
-		"pkg/cache/client.go.tmpl",
-		"pkg/cache/redis_store.go.tmpl",
-		"pkg/errors/code.go.tmpl",
-		"pkg/errors/errors.go.tmpl",
+		"internal/adapter/repository/user_dao.go.tmpl",
+		"internal/adapter/repository/user_repo.go.tmpl",
+		"internal/adapter/cache/redis_store.go.tmpl",
+		"internal/adapter/cache/client.go.tmpl",
+		"internal/registry/registry.go.tmpl",
+		"internal/delivery/http/dto/auth_dto.go.tmpl",
+		"internal/delivery/http/middleware.go.tmpl",
+		"internal/delivery/http/auth_handler.go.tmpl",
+		"internal/delivery/http/handler.go.tmpl",
+		"internal/service/jwt_svc.go.tmpl",
+		"internal/infrastructure/database/migrate.go.tmpl",
+		"internal/infrastructure/database/postgres.go.tmpl",
+		"internal/infrastructure/config/redis.go.tmpl",
+		"internal/infrastructure/config/app.go.tmpl",
+		"internal/infrastructure/config/database.go.tmpl",
+		"internal/infrastructure/redis/redis.go.tmpl",
+		"internal/infrastructure/constants/http.go.tmpl",
+		"internal/usecase/auth/usecase.go.tmpl",
+		"internal/usecase/auth/signin_uc.go.tmpl",
+		"internal/domain/repository/user_repo.go.tmpl",
+		"internal/domain/entity/user.go.tmpl",
+		"internal/domain/service/jwt_svc.go.tmpl",
 		"pkg/logger/logger.go.tmpl",
-		"pkg/database/migrate.go.tmpl",
-		"pkg/database/postgres.go.tmpl",
-		"pkg/redis/redis.go.tmpl",
 		"pkg/utils/bcrypt.go.tmpl",
-		"pkg/utils/md5.go.tmpl",
-		"pkg/utils/rand_string.go.tmpl",
-		"pkg/utils/slug.go.tmpl",
-		"pkg/utils/uuid.go.tmpl",
-		"pkg/validate/base.go.tmpl",
+		"pkg/errors/errors.go.tmpl",
+		"pkg/errors/code.go.tmpl",
 	}
 )
 
@@ -120,16 +90,18 @@ func NewProject() *cli.Command {
 		Usage: "Generate base code for go project use clean architecture",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
-				Name:     "name",
-				Aliases:  []string{"n"},
-				Usage:    "Name of project with module format (ex: project-demo)",
-				Required: true,
+				Name:        "package",
+				Aliases:     []string{"pkg"},
+				Usage:       "Package is the name of the project",
+				DefaultText: "github.com/username/projectname",
+				Required:    true,
 			},
 			&cli.StringFlag{
 				Name:        "path",
 				Aliases:     []string{"p"},
 				Usage:       "Path is a path to generate the project",
-				DefaultText: "./",
+				DefaultText: "project_new",
+				Value:       "project_new",
 			},
 		},
 		Action: func(ctx *cli.Context) error {
@@ -152,7 +124,7 @@ func NewProject() *cli.Command {
 			}
 
 			p := &project{
-				Project: strings.ToLower(ctx.String("name")),
+				Project: strings.ToLower(ctx.String("package")),
 				Path:    rltDir,
 			}
 			// Create dir
@@ -183,7 +155,7 @@ func NewProject() *cli.Command {
 
 // projectValidate is a function to validate project name
 func projectValidate(ctx *cli.Context) error {
-	if ok := utils.ValidateDash(ctx.String("name")); !ok {
+	if ok := utils.ValidateDash(ctx.String("package")); !ok {
 		return errNameProjectInvalid
 	}
 	return nil
@@ -191,7 +163,7 @@ func projectValidate(ctx *cli.Context) error {
 
 // createDir is a function to create directory for project
 func (p *project) createDir(context.Context) error {
-	dir := filepath.Join(p.Path, p.Project)
+	dir := filepath.Join(p.Path)
 	// Check directory exist or not
 	if _, err := os.Stat(dir); !errors.Is(err, os.ErrNotExist) {
 		return errDirExists
@@ -216,7 +188,7 @@ func (p *project) destroy(context.Context) error {
 
 // generateStruct is a function to generate struct for project
 func (p *project) generateStruct(context.Context) error {
-	dir := filepath.Join(p.Path, p.Project)
+	dir := filepath.Join(p.Path)
 	// Generate struct
 	for _, s := range pStructs {
 		if err := os.MkdirAll(filepath.Join(dir, s), os.ModePerm); err != nil {
@@ -229,14 +201,12 @@ func (p *project) generateStruct(context.Context) error {
 
 // generateFile is a function to generate file for project
 func (p *project) generateFile(_ context.Context) error {
-	dir := filepath.Join(p.Path, p.Project)
+	dir := filepath.Join(p.Path)
 	tmpl, err := template.NewTemplate("tmpl", []string{
 		"tmpl/*.tmpl",
-		"tmpl/*/*.tmpl",
 		"tmpl/*/*/*.tmpl",
 		"tmpl/*/*/*/*.tmpl",
 		"tmpl/*/*/*/*/*.tmpl",
-		"tmpl/*/*/*/*/*/*.tmpl",
 	})
 	if err != nil {
 		return err

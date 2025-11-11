@@ -1,6 +1,6 @@
 module github.com/dung13890/go-base-gen
 
-go 1.22
+go 1.25
 
 require github.com/urfave/cli/v2 v2.27.1
 

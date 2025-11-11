@@ -1,26 +1,34 @@
 {{/*
-Copyright (c) 2023 dung13890. All rights reserved.
+Copyright (c) 2025 dung13890. All rights reserved.
 Mit License (MIT)
 */}}
 
 {{define "internal/delivery/http/handler.go"}}package http
 
 import (
-	"{{.Project}}/internal/usecase"
+	"{{.Project}}/internal/registry"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 // NewHandler will initialize the endpoints
-func NewHandler(g *echo.Group, uc *usecase.Usecase) {
-	// {{.Domain}}Handler will initialize the {{.Domain}}/ resources endpoint
-	{{.Domain}}Handler := &{{.Domain | capitalize}}Handler{
-		Usecase: uc.{{.Domain | capitalize}}UC,
-	}
+func NewHTTPHandler(
+	e *echo.Echo,
+	registry *registry.Registry,
+) {
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
+	g := e.Group("/api")
 
-	// {{.Domain | capitalize}} routes
-	g.GET("/{{.Domain}}s", {{.Domain}}Handler.Index)
-	g.GET("/{{.Domain}}s/:id", {{.Domain}}Handler.Show)
-	g.POST("/{{.Domain}}s", {{.Domain}}Handler.Store)
+	// Middleware
+
+	// Init Handler
+	authHandler := NewAuthHandler(registry.AuthUc)
+	// <!-- Add other handlers here -->
+
+	// routes
+	g.POST("/auth/sign-in", authHandler.SignIn)
+	// <!-- Add other routes here -->
 }
 {{end}}

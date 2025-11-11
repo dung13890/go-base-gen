@@ -1,0 +1,20 @@
+{{/*
+Copyright (c) 2025 dung13890. All rights reserved.
+Mit License (MIT)
+*/}}
+
+{{define "internal/domain/repository/user_repo.go"}}//go:generate mockgen -source=$GOFILE -destination=mock/user_repo_mock.go
+
+package repository
+
+import (
+	"context"
+
+	"{{.Project}}/internal/domain/entity"
+)
+
+// UserRepository represent the User's repository contract
+type UserRepository interface {
+	FindByEmail(context.Context, string) (*entity.User, error)
+}
+{{end}}

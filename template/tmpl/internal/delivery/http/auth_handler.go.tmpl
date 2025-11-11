@@ -1,0 +1,45 @@
+{{/*
+Copyright (c) 2025 dung13890. All rights reserved.
+Mit License (MIT)
+*/}}
+
+{{define "internal/delivery/http/auth_handler.go"}}package http
+
+import (
+	"net/http"
+
+	"{{.Project}}/internal/delivery/http/dto"
+	"{{.Project}}/internal/usecase/auth"
+	"{{.Project}}/pkg/errors"
+
+	"github.com/labstack/echo/v4"
+)
+
+// authHandler represent the http handler
+type authHandler struct {
+	usecase *auth.Usecase
+}
+
+// NewAuthHandler will create new an authHandler object
+func NewAuthHandler(usecase *auth.Usecase) *authHandler {
+	return &authHandler{
+		usecase: usecase,
+	}
+}
+
+// SignIn will Find data
+func (hl *authHandler) SignIn(c echo.Context) error {
+	userReq := new(dto.AuthenticateRequest)
+	if err := c.Bind(userReq); err != nil {
+		return errors.ErrBadRequest.Wrap(err)
+	}
+
+	ctx := c.Request().Context()
+	tokenStr, exp, err := hl.usecase.SignIn(ctx, userReq.Email, userReq.Password, c.RealIP())
+	if err != nil {
+		return errors.Throw(err)
+	}
+
+	return c.JSON(http.StatusOK, dto.ConvertToAuthenticateResponse(tokenStr, exp))
+}
+{{end}}

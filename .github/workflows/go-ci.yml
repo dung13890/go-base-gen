@@ -8,14 +8,14 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v5
 
     - uses: actions/setup-go@v4
       with:
-        go-version: 1.22
+        go-version: 1.25.0
 
     - name: run lint
-      uses: golangci/golangci-lint-action@v3
+      uses: golangci/golangci-lint-action@v8
       with:
-        version: v1.56.2
-        args: --config=./.golangci.yaml --timeout=10m
+        cache-invalidation-interval: 15
+        version: v2.6.0
