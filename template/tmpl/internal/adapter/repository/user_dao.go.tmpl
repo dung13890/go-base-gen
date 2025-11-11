@@ -1,0 +1,42 @@
+{{/*
+Copyright (c) 2025 dung13890. All rights reserved.
+Mit License (MIT)
+*/}}
+
+{{define "internal/adapter/repository/user_dao.go"}}package repository
+
+import (
+	"{{.Project}}/internal/domain/entity"
+
+	"gorm.io/gorm"
+)
+
+// user DAO model
+type user struct {
+	gorm.Model
+}
+
+// convertuserToEntity .-
+func convertUserToEntity(dao *user) *entity.User {
+	e := &entity.User{
+		ID:        dao.ID,
+		CreatedAt: dao.CreatedAt,
+		UpdatedAt: dao.UpdatedAt,
+	}
+
+	return e
+}
+
+// convertUserToDao .-
+func convertUserToDao(entity *entity.User) *user {
+	d := &user{
+		Model: gorm.Model{
+			ID:        entity.ID,
+			CreatedAt: entity.CreatedAt,
+			UpdatedAt: entity.UpdatedAt,
+		},
+	}
+
+	return d
+}
+{{end}}

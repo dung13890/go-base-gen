@@ -1,0 +1,27 @@
+{{/*
+Copyright (c) 2025 dung13890. All rights reserved.
+Mit License (MIT)
+*/}}
+
+{{define "internal/usecase/name/usecase.go"}}package {{.Domain}}
+
+import (
+	"context"
+
+	"{{.Project}}/internal/domain/entity"
+)
+
+// Usecase ...
+type Usecase struct {
+}
+
+// NewUsecase will create new usecase
+func NewUsecase() *Usecase {
+	return &Usecase{}
+}
+
+// Find ...
+func (*Usecase) Find(context.Context, uint64) (*entity.{{.Domain | capitalize}}, error) {
+	return &entity.{{.Domain | capitalize}}{}, nil
+}
+{{end}}

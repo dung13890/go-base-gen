@@ -1,0 +1,27 @@
+{{/*
+Copyright (c) 2025 dung13890. All rights reserved.
+Mit License (MIT)
+*/}}
+
+{{define "internal/delivery/http/dto/auth_dto.go"}}package dto
+
+// AuthenticateRequest is request for sign in
+type AuthenticateRequest struct {
+	Email    string `json:"email" validate:"required"`
+	Password string `json:"password" validate:"required"`
+}
+
+// AuthenticateResponse is struct used for log in
+type AuthenticateResponse struct {
+	AccessToken string `json:"access_token"`
+	ExpiresAt   int64  `json:"expires_at"`
+}
+
+// ConvertToAuthenticateResponse DTO
+func ConvertToAuthenticateResponse(tokenStr string, exp int64) *AuthenticateResponse {
+	return &AuthenticateResponse{
+		AccessToken: tokenStr,
+		ExpiresAt:   exp,
+	}
+}
+{{end}}

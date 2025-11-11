@@ -1,5 +1,5 @@
 {{/*
-Copyright (c) 2023 dung13890. All rights reserved.
+Copyright (c) 2025 dung13890. All rights reserved.
 Mit License (MIT)
 */}}
 {{define "Makefile"}}%.sql:
@@ -20,12 +20,8 @@ test: ### run test
 
 go-gen:
 	@echo "Generating mocks..."
-	rm -rf internal/domain/mock/*_mock.go
 	go generate -x ./internal/...
 	@echo "Generating pkg mocks..."
-	rm -rf pkg/*/mock/*_mock.go
 	go generate -x ./pkg/...
 
-dev:
-	air -c cmd/app/air.toml
 {{end}}

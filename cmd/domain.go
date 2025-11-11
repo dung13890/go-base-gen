@@ -20,49 +20,32 @@ var (
 	errProjectNotExists  = errors.New("Project is not exists!. Please create project first!")
 	errNameDomainInvalid = errors.New("Name of domain is invalid!")
 	errProjectInvalid    = errors.New("Name of project is invalid!")
-	errModuleInvalid     = errors.New("Name of module is invalid!")
 	dStructs             = []string{
-		"internal/domain",
-		"internal/modules/:name/delivery/http",
-		"internal/modules/:name/usecase",
-		"internal/modules/:name/repository",
-	}
-	dStructsWithoutModule = []string{
-		"internal/domain",
+		"internal/adapter/repository",
 		"internal/delivery/http",
-		"internal/usecase",
-		"internal/repository",
+		"internal/delivery/http/dto",
+		"internal/service",
+		"internal/domain/repository",
+		"internal/domain/entity",
+		"internal/domain/service",
+		"internal/usecase/:name",
 	}
 	dFiles = []string{
-		"internal/domain/domain.go.tmpl",
-		"internal/modules/name/delivery/http/domain_http.go.tmpl",
-		"internal/modules/name/delivery/http/domain_dto.go.tmpl",
-		"internal/modules/name/delivery/http/handler.go.tmpl",
-		"internal/modules/name/delivery/http/middleware.go.tmpl",
-		"internal/modules/name/usecase/domain_uc.go.tmpl",
-		"internal/modules/name/usecase/usecase.go.tmpl",
-		"internal/modules/name/repository/domain_repo.go.tmpl",
-		"internal/modules/name/repository/domain_dao.go.tmpl",
-		"internal/modules/name/repository/repository.go.tmpl",
-	}
-	dFilesWithoutModule = []string{
-		"internal/domain/domain.go.tmpl",
-		"internal/delivery/http/domain_http.go.tmpl",
-		"internal/delivery/http/domain_dto.go.tmpl",
-		"internal/delivery/http/handler.go.tmpl",
-		"internal/delivery/http/middleware.go.tmpl",
-		"internal/usecase/domain_uc.go.tmpl",
-		"internal/usecase/usecase.go.tmpl",
-		"internal/repository/domain_repo.go.tmpl",
-		"internal/repository/domain_dao.go.tmpl",
-		"internal/repository/repository.go.tmpl",
+		"internal/adapter/repository/domain_dao.go.tmpl",
+		"internal/adapter/repository/domain_repo.go.tmpl",
+		"internal/delivery/http/dto/domain_dto.go.tmpl",
+		"internal/delivery/http/domain_handler.go.tmpl",
+		"internal/service/domain_svc.go.tmpl",
+		"internal/domain/repository/domain_repo.go.tmpl",
+		"internal/domain/entity/domain.go.tmpl",
+		"internal/domain/service/domain_svc.go.tmpl",
+		"internal/usecase/name/usecase.go.tmpl",
 	}
 )
 
 type domain struct {
 	Domain    string
 	Project   string
-	Module    string
 	Path      string
 	ForcePath bool
 }
@@ -74,27 +57,24 @@ func NewDomain() *cli.Command {
 		Usage: "Create new domain in project",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
-				Name:     "name",
-				Aliases:  []string{"n"},
+				Name:     "domain",
+				Aliases:  []string{"dn"},
 				Usage:    "Name of domain is required! (ex: product)",
 				Required: true,
 			},
 			&cli.StringFlag{
-				Name:     "project",
-				Aliases:  []string{"pj"},
-				Usage:    "Name of project is required! (ex: project-demo)",
-				Required: true,
-			},
-			&cli.StringFlag{
-				Name:    "module",
-				Aliases: []string{"m"},
-				Usage:   "Name of module inside project (ex: ecommerce)",
+				Name:        "package",
+				Aliases:     []string{"pkg"},
+				Usage:       "Package is the name of the project",
+				DefaultText: "github.com/username/projectname",
+				Required:    true,
 			},
 			&cli.StringFlag{
 				Name:        "path",
 				Aliases:     []string{"p"},
 				Usage:       "Path is a path to generate for domain will stay in project path",
-				DefaultText: "./",
+				DefaultText: "project_new",
+				Value:       "project_new",
 			},
 			&cli.BoolFlag{
 				Name:    "force",
@@ -121,9 +101,8 @@ func NewDomain() *cli.Command {
 			}
 
 			d := &domain{
-				Domain:    ctx.String("name"),
-				Project:   strings.ToLower(ctx.String("project")),
-				Module:    strings.ToLower(ctx.String("module")),
+				Domain:    ctx.String("domain"),
+				Project:   strings.ToLower(ctx.String("package")),
 				Path:      rltDir,
 				ForcePath: ctx.Bool("force"),
 			}
@@ -150,34 +129,28 @@ func NewDomain() *cli.Command {
 // domainValidate is a function to validate input
 func domainValidate(ctx *cli.Context) error {
 	// Validate
-	if ok := utils.ValidateDash(ctx.String("name")); !ok {
+	if ok := utils.ValidateDomain(ctx.String("domain")); !ok {
 		return errNameDomainInvalid
 	}
-	if ok := utils.ValidateDash(ctx.String("project")); !ok {
+	if ok := utils.ValidateDash(ctx.String("package")); !ok {
 		return errProjectInvalid
-	}
-	if ok := utils.ValidateDash(ctx.String("module")); !ok {
-		return errModuleInvalid
 	}
 
 	return nil
 }
 
 // getDir will check path is contain project or not and return path include project
-func getDir(path, project string, forcePath bool) string {
+func getDir(path string, forcePath bool) string {
 	if forcePath {
 		return path
 	}
-	if ok := strings.HasSuffix(path, project); ok {
-		return path
-	}
 
-	return filepath.Join(path, project)
+	return filepath.Join(path)
 }
 
 // checkProject is a function to check project exist or not
 func (d *domain) checkProject(context.Context) error {
-	dir := getDir(d.Path, d.Project, d.ForcePath)
+	dir := getDir(d.Path, d.ForcePath)
 	modDir := filepath.Join(dir, "go.mod")
 	// Check project exist or not
 	if _, err := os.Stat(modDir); errors.Is(err, os.ErrNotExist) {
@@ -202,14 +175,12 @@ func (*domain) destroy(context.Context) error {
 
 // generateStruct is a function to generate struct for domain
 func (d *domain) generateStruct(context.Context) error {
-	dir := getDir(d.Path, d.Project, d.ForcePath)
-	structs := dStructsWithoutModule
-	if d.Module != "" {
-		structs = dStructs
-	}
+	dir := getDir(d.Path, d.ForcePath)
+	structs := dStructs
+	snakeDomain := utils.ToSnakeCase(d.Domain)
 	// Generate struct
 	for _, s := range structs {
-		target := strings.Replace(s, ":name", d.Module, 1)
+		target := strings.Replace(s, ":name", snakeDomain, 1)
 		// Check directory exist or not
 		if _, err := os.Stat(filepath.Join(dir, target)); !errors.Is(err, os.ErrNotExist) {
 			continue
@@ -224,32 +195,26 @@ func (d *domain) generateStruct(context.Context) error {
 
 // generateFile is a function to generate file for domain
 func (d *domain) generateFile(_ context.Context) error {
-	dir := getDir(d.Path, d.Project, d.ForcePath)
+	dir := getDir(d.Path, d.ForcePath)
 	tmpl, err := template.NewTemplate("tmpl", []string{
-		"tmpl/*/*.tmpl",
 		"tmpl/*/*/*.tmpl",
 		"tmpl/*/*/*/*.tmpl",
 		"tmpl/*/*/*/*/*.tmpl",
-		"tmpl/*/*/*/*/*/*.tmpl",
 	})
 	if err != nil {
 		return err
 	}
 	snakeDomain := utils.ToSnakeCase(d.Domain)
 	rl := strings.NewReplacer(
-		"/modules/name/", "/modules/"+d.Module+"/",
+		"usecase/name/", "/usecase/"+snakeDomain+"/",
 		"domain.go", snakeDomain+".go",
-		"domain_http.go", snakeDomain+"_http.go",
-		"domain_grpc.go", snakeDomain+"_grpc.go",
+		"domain_handler.go", snakeDomain+"_handler.go",
 		"domain_dto.go", snakeDomain+"_dto.go",
 		"domain_repo.go", snakeDomain+"_repo.go",
 		"domain_dao.go", snakeDomain+"_dao.go",
-		"domain_uc.go", snakeDomain+"_uc.go",
+		"domain_svc.go", snakeDomain+"_svc.go",
 	)
-	files := dFilesWithoutModule
-	if d.Module != "" {
-		files = dFiles
-	}
+	files := dFiles
 	for _, f := range files {
 		index := strings.TrimSuffix(f, ".tmpl")
 		target := filepath.Join(dir, rl.Replace(index))

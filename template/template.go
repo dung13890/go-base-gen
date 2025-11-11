@@ -4,6 +4,8 @@ import (
 	"embed"
 	"strings"
 	"text/template"
+
+	"github.com/dung13890/go-base-gen/pkg/utils"
 )
 
 var (
@@ -13,6 +15,7 @@ var (
 	Funcs = template.FuncMap{
 		"upper":      strings.ToUpper,
 		"capitalize": capitalize,
+		"snakecase":  snakecase,
 	}
 )
 
@@ -30,4 +33,8 @@ func capitalize(s string) string {
 		return ""
 	}
 	return strings.ToUpper(s[:1]) + s[1:]
+}
+
+func snakecase(s string) string {
+	return utils.ToSnakeCase(s)
 }

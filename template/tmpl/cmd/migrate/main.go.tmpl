@@ -1,5 +1,5 @@
 {{/*
-Copyright (c) 2023 dung13890. All rights reserved.
+Copyright (c) 2025 dung13890. All rights reserved.
 Mit License (MIT)
 */}}
 
@@ -8,15 +8,15 @@ Mit License (MIT)
 import (
 	"time"
 
-	"{{.Project}}/config"
-	"{{.Project}}/pkg/database"
+	"{{.Project}}/internal/infrastructure/config"
+	"{{.Project}}/internal/infrastructure/database"
 	"{{.Project}}/pkg/logger"
 )
 
 func main() {
-	logger.InitLogger()
+	logger.Init()
 	if err := config.LoadConfig(); err != nil {
-		logger.Error().Fatal(err)
+		logger.Error(err)
 	}
 
 	conf := config.GetAppConfig()
@@ -24,14 +24,14 @@ func main() {
 	// Set timezone
 	loc, err := time.LoadLocation(conf.AppTimeZone)
 	if err != nil {
-		logger.Error().Fatal(err)
+		logger.Error(err)
 	}
 	time.Local = loc
 
 	db := config.GetDBConfig()
 
 	if err := database.Migrate(db); err != nil {
-		logger.Error().Fatal(err)
+		logger.Error(err)
 	}
 }
 {{end}}

@@ -1,0 +1,18 @@
+{{/*
+Copyright (c) 2025 dung13890. All rights reserved.
+Mit License (MIT)
+*/}}
+
+{{define "internal/domain/service/jwt_svc.go"}}//go:generate mockgen -source=$GOFILE -destination=mock/jwt_svc_mock.go
+
+package service
+
+import (
+	"context"
+)
+
+// JWTService is a struct that represent the jwt's service
+type JWTService interface {
+	Generate(context.Context) (string, error)
+}
+{{end}}

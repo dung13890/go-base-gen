@@ -1,0 +1,54 @@
+{{/*
+Copyright (c) 2025 dung13890. All rights reserved.
+Mit License (MIT)
+*/}}
+
+{{define "internal/adapter/repository/user_repo.go"}}package repository
+
+import (
+	"context"
+	"{{.Project}}/internal/domain/entity"
+	"{{.Project}}/internal/domain/repository"
+	"{{.Project}}/pkg/errors"
+
+	"gorm.io/gorm"
+)
+
+// userRepository ...
+type userRepository struct {
+	*gorm.DB
+}
+
+// NewUserRepository will implement of repository.UserRepository interface
+func NewUserRepository(db *gorm.DB) repository.UserRepository {
+	return &userRepository{
+		DB: db,
+	}
+}
+
+// Find will find content from db
+func (rp *userRepository) Find(ctx context.Context, id uint) (*entity.User, error) {
+	dao := user{}
+	if err := rp.DB.WithContext(ctx).First(&dao, id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.ErrNotFound.Wrap(err)
+		}
+		return nil, errors.ErrUnexpectedDBError.Wrap(err)
+	}
+
+	return convertUserToEntity(&dao), nil
+}
+
+// FindByEmail find content by email from db
+func (rp *userRepository) FindByEmail(ctx context.Context, email string) (*entity.User, error) {
+	dao := user{}
+	if err := rp.DB.WithContext(ctx).Where("email = ?", email).First(&dao).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.ErrNotFound.Wrap(err)
+		}
+		return nil, errors.ErrUnexpectedDBError.Wrap(err)
+	}
+
+	return convertUserToEntity(&dao), nil
+}
+{{end}}
