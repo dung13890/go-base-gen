@@ -1,0 +1,19 @@
+{{/*
+Copyright (c) 2025 dung13890. All rights reserved.
+Mit License (MIT)
+*/}}
+
+{{define "internal/adapter/presenter/auth_presenter.go"}}package presenter
+
+import (
+	"{{.Project}}/internal/delivery/http/dto"
+)
+
+// ConvertToAuthenticateHTTPResponse DTO
+func ConvertToAuthenticateHTTPResponse(tokenStr string, exp int64) dto.AuthenticateResponse {
+	return dto.AuthenticateResponse{
+		AccessToken: tokenStr,
+		ExpiresAt:   exp,
+	}
+}
+{{end}}

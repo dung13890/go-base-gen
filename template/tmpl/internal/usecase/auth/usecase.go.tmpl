@@ -6,19 +6,19 @@ Mit License (MIT)
 {{define "internal/usecase/auth/usecase.go"}}package auth
 
 import (
+	"{{.Project}}/internal/domain/gateway"
 	"{{.Project}}/internal/domain/repository"
-	"{{.Project}}/internal/domain/service"
 )
 
 // Usecase ...
 type Usecase struct {
-	jwtSvc service.JWTService
+	jwtSvc gateway.JWTService
 	repo   repository.UserRepository
 }
 
 // NewUsecase will create new auth usecase
 func NewUsecase(
-	jwtSvc service.JWTService,
+	jwtSvc gateway.JWTService,
 	repo repository.UserRepository,
 ) *Usecase {
 	return &Usecase{

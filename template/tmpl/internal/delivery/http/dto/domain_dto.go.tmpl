@@ -7,8 +7,6 @@ Mit License (MIT)
 
 import (
 	"time"
-
-	"{{.Project}}/internal/domain/entity"
 )
 
 // {{.Domain | capitalize}}Request is request for create {{.Domain}}
@@ -20,19 +18,5 @@ type {{.Domain | capitalize}}Response struct {
 	ID        uint      `json:"id"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
-}
-
-// Convert{{.Domain | capitalize}}RequestToEntity DTO
-func Convert{{.Domain | capitalize}}RequestToEntity(*{{.Domain | capitalize}}Request) *entity.{{.Domain | capitalize}} {
-	return &entity.{{.Domain | capitalize}}{}
-}
-
-// Convert{{.Domain | capitalize}}EntityToResponse DTO
-func Convert{{.Domain | capitalize}}EntityToResponse(dm *entity.{{.Domain | capitalize}}) {{.Domain | capitalize}}Response {
-	return {{.Domain | capitalize}}Response{
-		ID:        dm.ID,
-		CreatedAt: dm.CreatedAt,
-		UpdatedAt: dm.UpdatedAt,
-	}
 }
 {{end}}

@@ -16,12 +16,4 @@ type AuthenticateResponse struct {
 	AccessToken string `json:"access_token"`
 	ExpiresAt   int64  `json:"expires_at"`
 }
-
-// ConvertToAuthenticateResponse DTO
-func ConvertToAuthenticateResponse(tokenStr string, exp int64) *AuthenticateResponse {
-	return &AuthenticateResponse{
-		AccessToken: tokenStr,
-		ExpiresAt:   exp,
-	}
-}
 {{end}}

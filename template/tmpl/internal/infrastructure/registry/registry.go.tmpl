@@ -3,15 +3,13 @@ Copyright (c) 2025 dung13890. All rights reserved.
 Mit License (MIT)
 */}}
 
-{{define "internal/registry/registry.go"}}package registry
+{{define "internal/infrastructure/registry/registry.go"}}package registry
 
 import (
-	"{{.Project}}/internal/adapter/cache"
+	"{{.Project}}/internal/adapter/gateway/service"
 	"{{.Project}}/internal/adapter/repository"
-	"{{.Project}}/internal/service"
 	"{{.Project}}/internal/usecase/auth"
 
-	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 
@@ -22,13 +20,12 @@ type Registry struct {
 }
 
 // NewRegistry will create new registry
-func NewRegistry(db *gorm.DB, rdb *redis.Client) *Registry {
+func NewRegistry(db *gorm.DB) *Registry {
 	// Initialize repositories
 	userRepo := repository.NewUserRepository(db)
 
-	cm := cache.NewRedisStore(rdb)
 	// Initialize services with adapters
-	jwtSvc := service.NewJWTService(cm)
+	jwtSvc := service.NewJWTService()
 
 	return &Registry{
 		AuthUc: auth.NewUsecase(jwtSvc, userRepo),

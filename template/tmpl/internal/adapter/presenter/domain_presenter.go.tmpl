@@ -1,0 +1,26 @@
+{{/*
+Copyright (c) 2025 dung13890. All rights reserved.
+Mit License (MIT)
+*/}}
+
+{{define "internal/adapter/presenter/domain_presenter.go"}}package presenter
+
+import (
+	"{{.Project}}/internal/delivery/http/dto"
+	"{{.Project}}/internal/domain/entity"
+)
+
+// Convert{{.Domain | capitalize}}RequestToEntity DTO
+func ConvertHTTP{{.Domain | capitalize}}RequestToEntity(*dto.{{.Domain | capitalize}}Request) *entity.{{.Domain | capitalize}} {
+	return &entity.{{.Domain | capitalize}}{}
+}
+
+// Convert{{.Domain | capitalize}}EntityToResponse DTO
+func Convert{{.Domain | capitalize}}EntityToHTTPResponse(dm *entity.{{.Domain | capitalize}}) dto.{{.Domain | capitalize}}Response {
+	return dto.{{.Domain | capitalize}}Response{
+		ID:        dm.ID,
+		CreatedAt: dm.CreatedAt,
+		UpdatedAt: dm.UpdatedAt,
+	}
+}
+{{end}}

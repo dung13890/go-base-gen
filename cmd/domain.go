@@ -24,23 +24,22 @@ var (
 	errProjectInvalid    = errors.New("Name of project is invalid!")
 	dStructs             = []string{
 		"internal/adapter/repository",
+		"internal/adapter/presenter",
 		"internal/delivery/http",
 		"internal/delivery/http/dto",
-		"internal/service",
 		"internal/domain/repository",
 		"internal/domain/entity",
-		"internal/domain/service",
+		"internal/domain/gateway",
 		"internal/usecase/:name",
 	}
 	dFiles = []string{
 		"internal/adapter/repository/domain_dao.go.tmpl",
 		"internal/adapter/repository/domain_repo.go.tmpl",
+		"internal/adapter/presenter/domain_presenter.go.tmpl",
 		"internal/delivery/http/dto/domain_dto.go.tmpl",
 		"internal/delivery/http/domain_handler.go.tmpl",
-		"internal/service/domain_svc.go.tmpl",
 		"internal/domain/repository/domain_repo.go.tmpl",
 		"internal/domain/entity/domain.go.tmpl",
-		"internal/domain/service/domain_svc.go.tmpl",
 		"internal/usecase/name/usecase.go.tmpl",
 	}
 )
@@ -217,7 +216,7 @@ func (d *domain) generateFile(context.Context) error {
 		"domain_dto.go", snakeDomain+"_dto.go",
 		"domain_repo.go", snakeDomain+"_repo.go",
 		"domain_dao.go", snakeDomain+"_dao.go",
-		"domain_svc.go", snakeDomain+"_svc.go",
+		"domain_presenter.go", snakeDomain+"_presenter.go",
 	)
 	files := dFiles
 	for _, f := range files {
