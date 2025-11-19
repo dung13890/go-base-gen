@@ -11,7 +11,7 @@ import (
 )
 
 // Convert{{.Domain | capitalize}}RequestToEntity DTO
-func ConvertHTTP{{.Domain | capitalize}}RequestToEntity(*{{.Domain | capitalize}}Request) *entity.{{.Domain | capitalize}} {
+func ConvertHTTP{{.Domain | capitalize}}RequestToEntity(*dto.{{.Domain | capitalize}}Request) *entity.{{.Domain | capitalize}} {
 	return &entity.{{.Domain | capitalize}}{}
 }
 

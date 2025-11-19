@@ -51,7 +51,6 @@ var (
 		"internal/adapter/repository/user_dao.go.tmpl",
 		"internal/adapter/repository/user_repo.go.tmpl",
 		"internal/adapter/gateway/service/jwt.go.tmpl",
-		"internal/adapter/gateway/service/jwt.go.tmpl",
 		"internal/adapter/presenter/auth_presenter.go.tmpl",
 		"internal/delivery/http/dto/auth_dto.go.tmpl",
 		"internal/delivery/http/middleware.go.tmpl",

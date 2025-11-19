@@ -6,12 +6,12 @@ Mit License (MIT)
 {{define "internal/adapter/presenter/auth_presenter.go"}}package presenter
 
 import (
-	"{{.Project}}/internal/domain/entity"
+	"{{.Project}}/internal/delivery/http/dto"
 )
 
 // ConvertToAuthenticateHTTPResponse DTO
-func ConvertToAuthenticateHTTPResponse(tokenStr string, exp int64) *entity.AuthenticateResponse {
-	return &entity.AuthenticateResponse{
+func ConvertToAuthenticateHTTPResponse(tokenStr string, exp int64) dto.AuthenticateResponse {
+	return dto.AuthenticateResponse{
 		AccessToken: tokenStr,
 		ExpiresAt:   exp,
 	}
