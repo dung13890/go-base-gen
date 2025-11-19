@@ -3,25 +3,21 @@ Copyright (c) 2025 dung13890. All rights reserved.
 Mit License (MIT)
 */}}
 
-{{define "internal/service/jwt_svc.go"}}package service
+{{define "internal/adapter/gateway/service/jwt_svc.go"}}package service
 
 import (
 	"context"
 
-	"{{.Project}}/internal/adapter/cache"
-	"{{.Project}}/internal/domain/service"
+	"go-app/internal/domain/gateway"
 )
 
 // jwtService is a struct that represent the jwt's service
 type jwtService struct {
-	cm cache.Client
 }
 
-// NewJwtService will create new an jwtService object representation of service.JWTService interface
-func NewJWTService(cm cache.Client) service.JWTService {
-	return &jwtService{
-		cm: cm,
-	}
+// NewJwtService will create new an jwtService object representation of gateway.JWTService interface
+func NewJWTService() gateway.JWTService {
+	return &jwtService{}
 }
 
 // Generate is a function to generate the jwt token

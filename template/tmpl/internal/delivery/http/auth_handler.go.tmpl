@@ -8,6 +8,7 @@ Mit License (MIT)
 import (
 	"net/http"
 
+	"{{.Project}}/internal/adapter/presenter"
 	"{{.Project}}/internal/delivery/http/dto"
 	"{{.Project}}/internal/usecase/auth"
 	"{{.Project}}/pkg/errors"
@@ -40,6 +41,6 @@ func (hl *authHandler) SignIn(c echo.Context) error {
 		return errors.Throw(err)
 	}
 
-	return c.JSON(http.StatusOK, dto.ConvertToAuthenticateResponse(tokenStr, exp))
+	return c.JSON(http.StatusOK, presenter.ConvertToAuthenticateHTTPResponse(tokenStr, exp))
 }
 {{end}}

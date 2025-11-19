@@ -16,8 +16,7 @@ import (
 	"{{.Project}}/internal/infrastructure/config"
 	"{{.Project}}/internal/infrastructure/constants"
 	"{{.Project}}/internal/infrastructure/database"
-	"{{.Project}}/internal/infrastructure/redis"
-	"{{.Project}}/internal/registry"
+	"{{.Project}}/internal/infrastructure/registry"
 	"{{.Project}}/pkg/errors"
 	"{{.Project}}/pkg/logger"
 
@@ -59,10 +58,9 @@ func run(conf config.AppConfig) error {
 		}
 	}
 
-	rdb := redis.New(config.GetRedisConfig())
 	e := echo.New()
 
-	reg := registry.NewRegistry(db, rdb)
+	reg := registry.NewRegistry(db)
 	httpHD.NewHTTPHandler(e, reg)
 
 	s := &http.Server{
